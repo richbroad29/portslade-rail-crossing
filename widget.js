@@ -1,3 +1,5 @@
+async function main() {
+
 var TOKEN = '314e8e0f-87f4-4b59-a04e-8abd3187d5a9';
 var WURL = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx';
 var Q = String.fromCharCode(34);
@@ -70,51 +72,42 @@ for (var i = 0; i < parts.length; i++) {
 var sv = parts[i];
 if (sv.indexOf(':sta>') < 0 && sv.indexOf(':std>') < 0) continue;
 if (sv.toLowerCase().indexOf('iscancelled>true') >= 0) continue;
-
-```
 var sta = getVal(sv, 'sta');
 var eta = getVal(sv, 'eta');
 var std = getVal(sv, 'std');
 var etd = getVal(sv, 'etd');
-
 var sch = sta || std;
 var et = eta || etd;
 var bt = sch;
 if (et && et !== 'On time' && et !== 'Delayed' && et.indexOf(':') >= 0) bt = et;
 var tm = pTime(bt);
 if (!tm) continue;
-
 var origBlock = sv.indexOf(':origin>');
 var destBlock = sv.indexOf(':destination>');
 var fr = '?';
 var to = '?';
 if (origBlock >= 0) {
-  var origChunk = sv.substring(origBlock, origBlock + 200);
-  fr = getVal(origChunk, 'locationName') || '?';
+var origChunk = sv.substring(origBlock, origBlock + 200);
+fr = getVal(origChunk, 'locationName') || '?';
 }
 if (destBlock >= 0) {
-  var destChunk = sv.substring(destBlock, destBlock + 200);
-  to = getVal(destChunk, 'locationName') || '?';
+var destChunk = sv.substring(destBlock, destBlock + 200);
+to = getVal(destChunk, 'locationName') || '?';
 }
-
 var dir = 'east';
 if (type === 'a') {
-  if (isEastOrigin(fr)) dir = 'west';
+if (isEastOrigin(fr)) dir = 'west';
 } else {
-  if (isEastOrigin(to)) dir = 'east';
-  else dir = 'west';
+if (isEastOrigin(to)) dir = 'east';
+else dir = 'west';
 }
-
 var dl = 0;
 if (et && et.indexOf(':') >= 0 && sch) {
-  var e2 = pTime(et);
-  var s2 = pTime(sch);
-  if (e2 && s2) dl = Math.round((e2 - s2) / 60000);
+var e2 = pTime(et);
+var s2 = pTime(sch);
+if (e2 && s2) dl = Math.round((e2 - s2) / 60000);
 }
-
 trains.push({fr:fr, to:to, tm:tm, dir:dir, dl:dl, tp:type, k:(sch||'')+dir});
-```
-
 }
 return trains;
 }
@@ -161,7 +154,6 @@ if (cs) per.push({s:cs, e:ce});
 return per;
 }
 
-async function run() {
 var trains = [];
 var live = false;
 try {
@@ -305,16 +297,17 @@ w.addSpacer(2);
 
 w.addSpacer();
 w.refreshAfterDate = new Date(now.getTime() + 300000);
-return w;
-}
 
-var widget = await run();
 if (config.runsInWidget) {
-Script.setWidget(widget);
+Script.setWidget(w);
 } else {
-await widget.presentMedium();
+await w.presentMedium();
 }
 Script.complete();
+
+}
+await main();
+
 
 
 
