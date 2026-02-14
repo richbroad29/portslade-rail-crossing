@@ -174,11 +174,27 @@ if (cur) {
 var opensIn = cd(cur.e.getTime() - now.getTime());
 speech = 'The crossing is likely closed right now. ';
 speech += 'Barriers should open in about ' + opensIn + '.';
+var nextClosure = null;
+for (var nc = 0; nc < per.length; nc++) {
+if (per[nc].s.getTime() > cur.e.getTime()) { nextClosure = per[nc]; break; }
+}
+if (nextClosure) {
+var closesAgain = cd(nextClosure.s.getTime() - now.getTime());
+speech += ' It will then close again in about ' + closesAgain + '.';
+}
 } else if (up) {
 var closesIn = cd(up.s.getTime() - now.getTime());
 var duration = cd(up.e.getTime() - up.s.getTime());
 speech = 'The crossing is open. ';
 speech += 'It will likely close in about ' + closesIn + ' for about ' + duration + '.';
+var nextAfter = null;
+for (var na = 0; na < per.length; na++) {
+if (per[na].s.getTime() > up.e.getTime()) { nextAfter = per[na]; break; }
+}
+if (nextAfter) {
+var closesAgain2 = cd(nextAfter.s.getTime() - up.e.getTime());
+speech += ' After that it will close again about ' + closesAgain2 + ' later.';
+}
 } else {
 speech = 'The crossing is open. No more closures are expected in the next couple of hours.';
 }
