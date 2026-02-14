@@ -32,7 +32,7 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 .refresh-btn:active{background:#334155}
 .train-row{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #334155}
 .train-row:last-child{border-bottom:none}
-.train-dir{flex-shrink:0;font-size:12px;width:20px;text-align:center}
+.train-dir{flex-shrink:0;font-size:14px;width:20px;text-align:center}
 .train-info{flex:1;min-width:0}
 .train-route{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .train-meta{font-size:10px;color:#64748B}
@@ -40,23 +40,21 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 .train-time-val{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
 .train-countdown{font-size:10px}
 .live-dot{color:#22D3EE;margin-left:4px}
+.delay-badge{color:#F59E0B;margin-left:4px;font-weight:600}
 .empty{text-align:center;color:#64748B;font-size:12px;padding:16px}
-.config-toggle{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
-.config-toggle span:first-child{font-size:12px;font-weight:600}
-.config-toggle span:last-child{font-size:10px;color:#64748B}
-.config-body{margin-top:10px}
-.config-desc{font-size:11px;color:#94A3B8;margin-bottom:8px;line-height:1.5}
-.config-desc a{color:#22D3EE;text-decoration:none}
-.input{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #334155;background:#0F172A;color:#E2E8F0;font-size:13px;margin-bottom:6px}
-.connect-btn{width:100%;padding:8px;border-radius:8px;border:none;background:#3B82F6;color:#FFF;font-weight:600;font-size:13px;cursor:pointer}
-.connect-btn:active{background:#2563EB}
 .info-text{font-size:11px;color:#94A3B8;line-height:1.5}
 .error{background:#7F1D1D;border-radius:8px;padding:10px;font-size:11px;color:#FCA5A5;margin-bottom:12px}
 .footer{text-align:center;font-size:9px;color:#475569;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
 .hidden{display:none}
+.api-status{font-size:10px;padding:4px 8px;border-radius:6px;display:inline-block;margin-top:4px}
+.api-live{background:#064E3B;color:#6EE7B7}
+.api-fallback{background:#78350F;color:#FCD34D}
+.api-error{background:#7F1D1D;color:#FCA5A5}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .blink-a{animation:blink 1s infinite}
 .blink-b{animation:blink 1s infinite .5s}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+.pulse{animation:pulse 2s infinite}
 </style>
 </head>
 <body>
@@ -64,11 +62,12 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
   <div class="hdr">
     <div class="hdr-label">Portslade Level Crossing</div>
     <div class="hdr-sub">Boundary Road · <span id="clock">--:--:--</span></div>
+    <div id="apiStatus" class="api-status api-fallback">⏳ Loading...</div>
   </div>
 
   <div class="status-card" id="statusCard">
     <div class="status-title" id="statusTitle">LOADING...</div>
-    <div class="status-msg" id="statusMsg">Loading schedule...</div>
+    <div class="status-msg" id="statusMsg">Fetching live train data...</div>
     <div class="status-time hidden" id="statusTime"></div>
   </div>
 
@@ -103,21 +102,8 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
     </div>
     <div class="card">
       <div class="card-label">Data</div>
-      <div class="card-value" id="dataMode" style="font-size:12px;color:#94A3B8">TIMETABLE</div>
+      <div class="card-value" id="dataMode" style="font-size:12px;color:#94A3B8">LOADING</div>
       <div class="card-sub" id="lastRefreshTime">--</div>
-    </div>
-  </div>
-
-  <div class="section" id="configSection">
-    <div class="config-toggle" onclick="toggleConfig()">
-      <span id="configLabel">🔌 Connect Live Data (Optional)</span>
-      <span id="configArrow">▼</span>
-    </div>
-    <div class="config-body hidden" id="configBody">
-      <div class="config-desc">Free account at <a href="https://api.rtt.io" target="_blank">api.rtt.io</a> for live train positions. Without this, timetable estimates are used.</div>
-      <input class="input" id="rttUser" placeholder="RTT Username" autocomplete="username" autocapitalize="none">
-      <input class="input" id="rttPass" placeholder="RTT Password" type="password" autocomplete="current-password">
-      <button class="connect-btn" onclick="connectRtt()">Connect</button>
     </div>
   </div>
 
@@ -126,13 +112,13 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
       <span>Upcoming Trains</span>
       <button class="refresh-btn" onclick="refreshData()">↻ Refresh</button>
     </div>
-    <div id="trainList"><div class="empty">Loading...</div></div>
+    <div id="trainList"><div class="empty">Fetching live data...</div></div>
   </div>
 
   <div class="section">
     <div style="font-size:12px;font-weight:600;margin-bottom:6px">ℹ️ How This Works</div>
     <div class="info-text" id="infoText">
-      Barriers typically close ~2 min before a train arrives and open ~30 sec after it passes. If two trains pass within 5 min, barriers may stay closed between them.
+      Uses the National Rail Live Departure Boards API for real-time train predictions at Portslade station. Barriers typically close ~2 min before a train arrives and open ~30 sec after. If two trains pass within 5 min, barriers may stay closed between them. Falls back to timetable data if the API is unavailable.
     </div>
   </div>
 
@@ -141,16 +127,20 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 </div>
 
 <script>
-const BARRIER_CLOSE_BEFORE=2,BARRIER_OPEN_AFTER=.5,CONSECUTIVE_WINDOW=5;
-let trains=[],closurePeriods=[],rttUser="",rttPass="",hasCredentials=false,apiMode="timetable",nextCloseTime=null,nextOpenTime=null;
+const NR_TOKEN="314e8e0f-87f4-4b59-a04e-8abd3187d5a9";
+const STATION_CRS="PLD";
+const BARRIER_CLOSE_BEFORE=2, BARRIER_OPEN_AFTER=0.5, CONSECUTIVE_WINDOW=5;
+const CORS_PROXY="https://corsproxy.io/?url=";
+const NR_ENDPOINT="https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx";
+
+let trains=[],closurePeriods=[],nextCloseTime=null,nextOpenTime=null,apiMode="loading",lastError="";
 
 function $(id){return document.getElementById(id)}
 function fmtTime(d){if(!d)return"--:--";return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}
-function fmtTimeShort(d){if(!d)return"";return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}
+function fmtShort(d){if(!d)return"";return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}
 function fmtCountdown(ms){if(ms<=0)return"NOW";const s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60;return m>0?m+"m "+sec+"s":sec+"s"}
-
-function getStatusColors(status){
-  switch(status){
+function getColors(st){
+  switch(st){
     case"CLOSED":return{bg:"#DC2626",text:"#FFF",glow:"0 0 30px rgba(220,38,38,.5)"};
     case"CLOSING_SOON":return{bg:"#F59E0B",text:"#000",glow:"0 0 30px rgba(245,158,11,.5)"};
     case"OPEN":return{bg:"#16A34A",text:"#FFF",glow:"0 0 30px rgba(22,163,74,.5)"};
@@ -158,11 +148,158 @@ function getStatusColors(status){
   }
 }
 
+// Build SOAP request for arrivals + departures
+function buildSoapRequest(type){
+  const method=type==="arr"?"GetArrBoardWithDetails":"GetDepBoardWithDetails";
+  return`<?xml version="1.0"?>
+<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
+  xmlns:typ="http://thalesgroup.com/RTTI/2013-11-28/Token/types"
+  xmlns:ldb="http://thalesgroup.com/RTTI/2021-11-01/ldb/">
+<soap:Header><typ:AccessToken><typ:TokenValue>${NR_TOKEN}</typ:TokenValue></typ:AccessToken></soap:Header>
+<soap:Body><ldb:${method}Request><ldb:numRows>20</ldb:numRows><ldb:crs>${STATION_CRS}</ldb:crs><ldb:timeWindow>120</ldb:timeWindow></ldb:${method}Request></soap:Body>
+</soap:Envelope>`;
+}
+
+function parseTimeStr(timeStr){
+  if(!timeStr)return null;
+  const now=new Date();
+  const parts=timeStr.split(":");
+  if(parts.length<2)return null;
+  const h=parseInt(parts[0]),m=parseInt(parts[1]);
+  const d=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0);
+  // Handle overnight: if time is way in the past, it might be tomorrow
+  if(d.getTime()<now.getTime()-6*3600000)d.setDate(d.getDate()+1);
+  return d;
+}
+
+function extractText(xml,tag){
+  const re=new RegExp("<[^:]*:?"+tag+"[^>]*>([^<]*)</[^:]*:?"+tag+">","i");
+  const m=xml.match(re);
+  return m?m[1].trim():null;
+}
+
+function parseServices(xmlText,type){
+  const services=[];
+  // Split by trainService entries
+  const svcRegex=/<[a-z0-9]*:?trainServices[\s>][\s\S]*?<\/[a-z0-9]*:?trainServices>/gi;
+  const container=xmlText.match(svcRegex);
+  if(!container)return services;
+  
+  // Get individual services
+  const itemRegex=/<[a-z0-9]*:?service[\s>][\s\S]*?<\/[a-z0-9]*:?service>/gi;
+  const items=container[0].match(itemRegex);
+  if(!items)return items||[];
+  
+  for(const svc of items){
+    const sta=extractText(svc,"sta")||extractText(svc,"std");
+    const eta=extractText(svc,"eta")||extractText(svc,"etd");
+    const origin=extractText(svc,"origin")?extractText(svc.match(/<[^:]*:?origin[\s\S]*?<\/[^:]*:?origin>/i)?.[0]||"","locationName"):"";
+    const dest=extractText(svc.match(/<[^:]*:?destination[\s\S]*?<\/[^:]*:?destination>/i)?.[0]||"","locationName")||"";
+    const operator=extractText(svc,"operator")||"";
+    const isCancelled=svc.toLowerCase().includes("<[^:]*:?iscancelled>true")||extractText(svc,"cancelReason")!=null;
+    const etaText=(eta||"").toLowerCase();
+    
+    if(isCancelled||etaText==="cancelled")continue;
+    
+    let bestTimeStr=sta;
+    if(eta&&eta!=="On time"&&eta!=="Delayed"&&eta.includes(":")){
+      bestTimeStr=eta;
+    }
+    
+    const bestTime=parseTimeStr(bestTimeStr);
+    if(!bestTime)continue;
+    
+    const isDelayed=eta&&eta!=="On time";
+    const delayMins=isDelayed&&eta&&eta.includes(":")?Math.round((parseTimeStr(eta)-parseTimeStr(sta))/60000):0;
+    
+    // Determine direction: if this is an arrival, train is arriving (could be from either direction)
+    // Use origin/destination to determine: trains heading to Brighton = eastbound
+    const eastPattern=/brighton|hove|london|gatwick|east croydon|haywards|lewes|eastbourne|hastings|worthing east/i;
+    const westPattern=/southampton|portsmouth|chichester|bognor|littlehampton|barnham|worthing|shoreham|lancing/i;
+    
+    let direction="east";
+    if(type==="arr"){
+      // Arriving train: check where it's coming from
+      if(eastPattern.test(origin))direction="west"; // coming FROM Brighton direction = heading west... no
+      // Actually: if origin is Brighton, the train came from the east heading west
+      if(/brighton|hove|london|gatwick|east croydon|haywards/i.test(origin))direction="west";
+      else direction="east";
+    } else {
+      // Departing train: check where it's going
+      if(eastPattern.test(dest))direction="east";
+      else direction="west";
+    }
+    
+    services.push({
+      id:sta+dest+origin,
+      origin:origin||"Unknown",
+      destination:dest||"Unknown",
+      scheduledTime:parseTimeStr(sta),
+      bestTime,
+      isRealtime:true,
+      isDelayed:delayMins>0,
+      delayMins,
+      etaText:eta||"On time",
+      direction,
+      operator,
+      type
+    });
+  }
+  return services;
+}
+
+async function fetchNationalRail(){
+  const results=[];
+  // We fetch both arrivals and departures to get the fullest picture
+  // Arrivals tell us when a train is about to reach/pass the crossing
+  for(const type of["arr","dep"]){
+    try{
+      const soap=buildSoapRequest(type);
+      // Try direct first, then CORS proxy
+      let response;
+      try{
+        response=await fetch(NR_ENDPOINT,{
+          method:"POST",
+          headers:{"Content-Type":"application/soap+xml;charset=utf-8"},
+          body:soap
+        });
+      }catch(e){
+        // CORS blocked - try proxy
+        response=await fetch(CORS_PROXY+encodeURIComponent(NR_ENDPOINT),{
+          method:"POST",
+          headers:{"Content-Type":"application/soap+xml;charset=utf-8"},
+          body:soap
+        });
+      }
+      if(!response.ok)throw new Error("HTTP "+response.status);
+      const xml=await response.text();
+      const svcs=parseServices(xml,type);
+      results.push(...svcs);
+    }catch(e){
+      console.warn("NR API ("+type+") error:",e);
+      lastError=e.message;
+    }
+  }
+  return results;
+}
+
+function deduplicateTrains(trainList){
+  // Prefer arrivals over departures for the same service (arrival = when it reaches the crossing)
+  const map=new Map();
+  for(const t of trainList){
+    const key=t.scheduledTime?.getTime()+"-"+t.direction;
+    const existing=map.get(key);
+    if(!existing){map.set(key,t)}
+    else if(t.type==="arr"&&existing.type==="dep"){map.set(key,t)}
+  }
+  return Array.from(map.values()).sort((a,b)=>a.bestTime-b.bestTime);
+}
+
 function generateTimetable(){
   const now=new Date(),day=now.getDay(),isWkd=day>=1&&day<=5,isSat=day===6;
   let entries=[];
   if(isWkd){
-    const t=[
+    entries=[
       ["0525","e","Shoreham","Brighton"],["0540","w","Brighton","Southampton"],
       ["0555","e","Southampton","Brighton"],["0605","w","Brighton","Worthing"],
       ["0615","e","Worthing","Brighton"],["0625","w","Brighton","Southampton"],
@@ -204,12 +341,11 @@ function generateTimetable(){
       ["2245","e","Southampton","Brighton"],["2315","w","Brighton","Southampton"],
       ["2345","e","Worthing","Brighton"],["0015","w","Brighton","Worthing"]
     ];
-    entries=t;
   } else if(isSat){
     for(let h=6;h<=23;h++){
       const hh=String(h).padStart(2,"0");
       entries.push([hh+"05","e","West Coastway","Brighton"],[hh+"20","w","Brighton","West Coastway"]);
-      if(h>=7&&h<=20) entries.push([hh+"35","e","West Coastway","Brighton"],[hh+"50","w","Brighton","West Coastway"]);
+      if(h>=7&&h<=20)entries.push([hh+"35","e","West Coastway","Brighton"],[hh+"50","w","Brighton","West Coastway"]);
     }
   } else {
     for(let h=7;h<=23;h++){
@@ -221,44 +357,8 @@ function generateTimetable(){
     const h=parseInt(e[0].substring(0,2)),m=parseInt(e[0].substring(2,4));
     const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0);
     if(h<3&&i>0)dt.setDate(dt.getDate()+1);
-    return{id:"TT-"+i,origin:e[2],destination:e[3],bestTime:dt,isRealtime:false,direction:e[1]==="e"?"east":"west",operator:"Southern / GWR"};
+    return{id:"TT-"+i,origin:e[2],destination:e[3],scheduledTime:dt,bestTime:dt,isRealtime:false,isDelayed:false,delayMins:0,etaText:"Scheduled",direction:e[1]==="e"?"east":"west",operator:"Southern / GWR",type:"tt"};
   });
-}
-
-function parseRttTime(ts,dateStr){
-  if(!ts||!dateStr)return null;
-  const h=parseInt(ts.substring(0,2)),m=parseInt(ts.substring(2,4)),s=ts.length>4?parseInt(ts.substring(4,6)):0;
-  const p=dateStr.split("-");
-  return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]),h,m,s);
-}
-
-async function fetchRttData(){
-  if(!hasCredentials)return generateTimetable();
-  const now=new Date();
-  const dateStr=now.getFullYear()+"/"+String(now.getMonth()+1).padStart(2,"0")+"/"+String(now.getDate()).padStart(2,"0");
-  const dateKey=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
-  try{
-    const r=await fetch("https://api.rtt.io/api/v1/json/search/PLD/"+dateStr,{
-      headers:{Authorization:"Basic "+btoa(rttUser+":"+rttPass)}
-    });
-    if(!r.ok)throw new Error("API "+r.status);
-    const data=await r.json();
-    if(!data.services)return generateTimetable();
-    const parsed=data.services.map(svc=>{
-      const loc=svc.locationDetail;
-      const actual=loc.realtimeArrival||loc.realtimeDeparture;
-      const planned=loc.gbttBookedArrival||loc.gbttBookedDeparture;
-      const timeStr=actual||planned;
-      const passTime=parseRttTime(timeStr,dateKey);
-      const dest=loc.destination?.[0]?.description||"Unknown";
-      const orig=loc.origin?.[0]?.description||"Unknown";
-      const cancelled=loc.cancelReasonCode!=null||(loc.displayAs||"").includes("CANCEL");
-      return{id:svc.serviceUid,origin:orig,destination:dest,bestTime:passTime,isRealtime:!!actual,
-        direction:dest.match(/Brighton|Hove|London/i)?"east":"west",operator:svc.atocName||"Unknown",cancelled};
-    }).filter(t=>t.bestTime&&!t.cancelled).sort((a,b)=>a.bestTime-b.bestTime);
-    if(parsed.length>0){apiMode="live";return parsed;}
-  }catch(e){console.log("RTT error:",e);$("errorBox").textContent="RTT API error: "+e.message;$("errorBox").classList.remove("hidden");setTimeout(()=>$("errorBox").classList.add("hidden"),5000)}
-  return generateTimetable();
 }
 
 function computeClosures(trainList){
@@ -279,34 +379,63 @@ function computeClosures(trainList){
 
 async function refreshData(){
   try{
-    trains=await fetchRttData();
+    $("errorBox").classList.add("hidden");
+    let liveTrains=await fetchNationalRail();
+    
+    if(liveTrains.length>0){
+      trains=deduplicateTrains(liveTrains);
+      apiMode="live";
+      $("apiStatus").className="api-status api-live";
+      $("apiStatus").textContent="● Live Data Connected";
+      $("dataMode").textContent="LIVE";
+      $("dataMode").style.color="#22D3EE";
+    } else {
+      trains=generateTimetable();
+      apiMode="timetable";
+      $("apiStatus").className="api-status api-fallback";
+      $("apiStatus").textContent="⚠ Timetable Fallback"+(lastError?" ("+lastError+")":"");
+      $("dataMode").textContent="TIMETABLE";
+      $("dataMode").style.color="#F59E0B";
+    }
+    
     closurePeriods=computeClosures(trains);
-    $("lastRefreshTime").textContent=fmtTimeShort(new Date());
-    $("dataMode").textContent=apiMode==="live"?"LIVE":"TIMETABLE";
-    $("dataMode").style.color=apiMode==="live"?"#22D3EE":"#94A3B8";
-    $("infoText").textContent="Barriers typically close ~2 min before a train arrives and open ~30 sec after it passes. If two trains pass within 5 min, barriers may stay closed between them. "+(apiMode==="timetable"?"Currently using timetable estimates — connect a free RTT API account for live tracking.":"Using live train data from Realtime Trains.");
+    $("lastRefreshTime").textContent=fmtShort(new Date());
     renderTrains();
-  }catch(e){console.error(e)}
+  }catch(e){
+    console.error("Refresh error:",e);
+    $("errorBox").textContent="Error: "+e.message;
+    $("errorBox").classList.remove("hidden");
+    // Fallback to timetable
+    trains=generateTimetable();
+    apiMode="timetable";
+    closurePeriods=computeClosures(trains);
+    $("apiStatus").className="api-status api-error";
+    $("apiStatus").textContent="⚠ API Error - Using Timetable";
+    renderTrains();
+  }
 }
 
 function renderTrains(){
   const now=new Date();
-  const upcoming=trains.filter(t=>t.bestTime>new Date(now.getTime()-60000)).slice(0,8);
+  const upcoming=trains.filter(t=>t.bestTime>new Date(now.getTime()-60000)).slice(0,10);
   if(!upcoming.length){$("trainList").innerHTML='<div class="empty">No upcoming trains</div>';return}
   let html="";
   for(const t of upcoming){
     const ms=t.bestTime.getTime()-now.getTime();
-    const isPast=ms<0;
+    const isPast=ms<-30000;
     const dirColor=t.direction==="east"?"#38BDF8":"#FB923C";
-    const arrow=t.direction==="east"?"→":"←";
-    html+=`<div class="train-row" style="opacity:${isPast?.4:1}">
-      <div class="train-dir" style="color:${dirColor}">${arrow}</div>
+    const arrow=t.direction==="east"?"→ ":"← ";
+    const delayBadge=t.isDelayed&&t.delayMins>0?`<span class="delay-badge">+${t.delayMins}m</span>`:"";
+    const liveDot=t.isRealtime?'<span class="live-dot">● LIVE</span>':"";
+    const etaColor=t.etaText==="On time"?"#6EE7B7":t.isDelayed?"#FCD34D":"#94A3B8";
+    html+=`<div class="train-row" style="opacity:${isPast?.35:1}">
+      <div class="train-dir" style="color:${dirColor};font-weight:700">${arrow}</div>
       <div class="train-info">
         <div class="train-route">${t.origin} → ${t.destination}</div>
-        <div class="train-meta">${t.operator}${t.isRealtime?'<span class="live-dot">● LIVE</span>':''}</div>
+        <div class="train-meta">${t.operator}${liveDot}${delayBadge} · <span style="color:${etaColor}">${t.etaText}</span></div>
       </div>
       <div class="train-time">
-        <div class="train-time-val">${fmtTimeShort(t.bestTime)}</div>
+        <div class="train-time-val">${fmtShort(t.bestTime)}</div>
         <div class="train-countdown" style="color:${ms>0?'#94A3B8':'#EF4444'}">${ms>0?fmtCountdown(ms):'passed'}</div>
       </div>
     </div>`;
@@ -321,84 +450,70 @@ function updateStatus(){
   nextCloseTime=null;nextOpenTime=null;
   let currentClosure=null,upcoming=null;
   const t=now.getTime();
+  
   for(const p of closurePeriods){
     if(t>=p.start.getTime()&&t<=p.end.getTime()){currentClosure=p;break}
     if(p.start.getTime()>t&&!upcoming){upcoming=p}
   }
+  
   if(currentClosure){
     status="CLOSED";
     nextOpenTime=currentClosure.end;
     const reopenIn=fmtCountdown(currentClosure.end.getTime()-t);
     msg="Barriers likely DOWN. Reopens in ~"+reopenIn;
-    $("statusTime").textContent="Opens ~"+fmtTimeShort(currentClosure.end);
+    $("statusTime").textContent="Opens ~"+fmtShort(currentClosure.end);
     $("statusTime").classList.remove("hidden");
-  } else if(upcoming){
-    const ms=upcoming.start.getTime()-t;
-    if(ms<=180000){status="CLOSING_SOON";msg="Closing in ~"+fmtCountdown(ms)}
-    else{status="OPEN";msg="Next closure in ~"+fmtCountdown(ms)}
-    nextCloseTime=upcoming.start;nextOpenTime=upcoming.end;
-    $("statusTime").classList.add("hidden");
-  } else{
-    msg="No more closures expected today";
+    $("statusCard").classList.add("pulse");
+  } else {
+    $("statusCard").classList.remove("pulse");
+    if(upcoming){
+      const ms=upcoming.start.getTime()-t;
+      nextCloseTime=upcoming.start;nextOpenTime=upcoming.end;
+      if(ms<=180000){status="CLOSING_SOON";msg="Closing in ~"+fmtCountdown(ms)}
+      else{status="OPEN";msg="Next closure in ~"+fmtCountdown(ms)}
+    } else {
+      msg="No more closures expected today";
+    }
     $("statusTime").classList.add("hidden");
   }
 
-  const c=getStatusColors(status);
+  const c=getColors(status);
   const card=$("statusCard");
   card.style.background=c.bg;card.style.color=c.text;card.style.boxShadow=c.glow;
   $("statusTitle").textContent=status==="CLOSED"?"BARRIERS DOWN":status==="CLOSING_SOON"?"CLOSING SOON":"CROSSING CLEAR";
   $("statusMsg").textContent=msg;
 
-  // Barrier animation
+  // Barrier
   const arm=$("barrierArm"),bar=$("armBar"),la=$("lightA"),lb=$("lightB");
   const stripes=document.querySelectorAll(".stripe");
   if(status==="CLOSED"){
     arm.style.transform="rotate(0deg)";bar.setAttribute("fill","#DC2626");
     stripes.forEach(s=>s.setAttribute("fill","#FFF"));
-    la.setAttribute("opacity","1");la.classList.add("blink-a");la.classList.remove("blink-b");
-    lb.setAttribute("opacity","1");lb.classList.add("blink-b");lb.classList.remove("blink-a");
-  } else if(status==="CLOSING_SOON"){
+    la.setAttribute("opacity","1");la.className="blink-a";
+    lb.setAttribute("opacity","1");lb.className="blink-b";
+  }else if(status==="CLOSING_SOON"){
     arm.style.transform="rotate(-30deg)";bar.setAttribute("fill","#F59E0B");
     stripes.forEach(s=>s.setAttribute("fill","#000"));
-    la.setAttribute("opacity","0");lb.setAttribute("opacity","0");
-    la.classList.remove("blink-a","blink-b");lb.classList.remove("blink-a","blink-b");
-  } else {
+    la.setAttribute("opacity","0");la.className="";lb.setAttribute("opacity","0");lb.className="";
+  }else{
     arm.style.transform="rotate(-80deg)";bar.setAttribute("fill","#16A34A");
     stripes.forEach(s=>s.setAttribute("fill","#15803d"));
-    la.setAttribute("opacity","0");lb.setAttribute("opacity","0");
-    la.classList.remove("blink-a","blink-b");lb.classList.remove("blink-a","blink-b");
+    la.setAttribute("opacity","0");la.className="";lb.setAttribute("opacity","0");lb.className="";
   }
 
-  // Countdown cards
-  if(nextCloseTime){$("nextCloseCountdown").textContent=fmtCountdown(Math.max(0,nextCloseTime.getTime()-t));$("nextCloseCountdown").style.color="#F59E0B";$("nextCloseTime").textContent=fmtTimeShort(nextCloseTime)}
+  // Cards
+  if(nextCloseTime){$("nextCloseCountdown").textContent=fmtCountdown(Math.max(0,nextCloseTime.getTime()-t));$("nextCloseCountdown").style.color="#F59E0B";$("nextCloseTime").textContent=fmtShort(nextCloseTime)}
   else{$("nextCloseCountdown").textContent="--";$("nextCloseCountdown").style.color="#475569";$("nextCloseTime").textContent=""}
-  if(nextOpenTime){$("nextOpenCountdown").textContent=fmtCountdown(Math.max(0,nextOpenTime.getTime()-t));$("nextOpenCountdown").style.color="#16A34A";$("nextOpenTime").textContent=fmtTimeShort(nextOpenTime)}
+  if(nextOpenTime){$("nextOpenCountdown").textContent=fmtCountdown(Math.max(0,nextOpenTime.getTime()-t));$("nextOpenCountdown").style.color="#16A34A";$("nextOpenTime").textContent=fmtShort(nextOpenTime)}
   else{$("nextOpenCountdown").textContent="--";$("nextOpenCountdown").style.color="#475569";$("nextOpenTime").textContent=""}
 
   renderTrains();
 }
 
-function toggleConfig(){
-  const body=$("configBody"),arrow=$("configArrow");
-  body.classList.toggle("hidden");
-  arrow.textContent=body.classList.contains("hidden")?"▼":"▲";
-}
-
-function connectRtt(){
-  rttUser=$("rttUser").value.trim();
-  rttPass=$("rttPass").value.trim();
-  if(!rttUser||!rttPass)return;
-  hasCredentials=true;
-  $("configLabel").textContent="✅ Live Data Connected";
-  $("configBody").classList.add("hidden");
-  $("configArrow").textContent="▼";
-  refreshData();
-}
-
 // Init
 refreshData();
 setInterval(updateStatus,1000);
-setInterval(refreshData,120000);
+setInterval(refreshData,60000); // Refresh live data every 60 seconds
 </script>
 
 </body>
