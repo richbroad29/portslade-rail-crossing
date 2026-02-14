@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Crossing">
+<meta name="theme-color" content="#0F172A">
+<title>Portslade Level Crossing</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro',system-ui,sans-serif;min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased}
+.wrap{max-width:480px;margin:0 auto;padding:16px 12px;padding-top:env(safe-area-inset-top,16px)}
+.hdr{text-align:center;margin-bottom:12px}
+.hdr-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#94A3B8;margin-bottom:4px}
+.hdr-sub{font-size:10px;color:#64748B}
+.status-card{border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:16px;transition:all .5s}
+.status-title{font-size:28px;font-weight:700;margin-bottom:4px}
+.status-msg{font-size:14px;opacity:.9}
+.status-time{margin-top:8px;font-size:20px;font-weight:600}
+.barrier-wrap{display:flex;flex-direction:column;align-items:center;margin:16px 0}
+.cards{display:flex;gap:8px;margin-bottom:16px}
+.card{flex:1;background:#1E293B;border-radius:12px;padding:12px 10px;text-align:center}
+.card-label{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.card-value{font-size:18px;font-weight:700}
+.card-sub{font-size:10px;color:#64748B;margin-top:2px}
+.section{background:#1E293B;border-radius:12px;padding:12px;margin-bottom:16px}
+.section-hdr{font-size:12px;font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.refresh-btn{background:none;border:1px solid #334155;border-radius:6px;color:#94A3B8;padding:2px 8px;font-size:10px;cursor:pointer}
+.refresh-btn:active{background:#334155}
+.train-row{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #334155}
+.train-row:last-child{border-bottom:none}
+.train-dir{flex-shrink:0;font-size:12px;width:20px;text-align:center}
+.train-info{flex:1;min-width:0}
+.train-route{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.train-meta{font-size:10px;color:#64748B}
+.train-time{text-align:right;flex-shrink:0}
+.train-time-val{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+.train-countdown{font-size:10px}
+.live-dot{color:#22D3EE;margin-left:4px}
+.empty{text-align:center;color:#64748B;font-size:12px;padding:16px}
+.config-toggle{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.config-toggle span:first-child{font-size:12px;font-weight:600}
+.config-toggle span:last-child{font-size:10px;color:#64748B}
+.config-body{margin-top:10px}
+.config-desc{font-size:11px;color:#94A3B8;margin-bottom:8px;line-height:1.5}
+.config-desc a{color:#22D3EE;text-decoration:none}
+.input{width:100%;padding:8px 10px;border-radius:8px;border:1px solid #334155;background:#0F172A;color:#E2E8F0;font-size:13px;margin-bottom:6px}
+.connect-btn{width:100%;padding:8px;border-radius:8px;border:none;background:#3B82F6;color:#FFF;font-weight:600;font-size:13px;cursor:pointer}
+.connect-btn:active{background:#2563EB}
+.info-text{font-size:11px;color:#94A3B8;line-height:1.5}
+.error{background:#7F1D1D;border-radius:8px;padding:10px;font-size:11px;color:#FCA5A5;margin-bottom:12px}
+.footer{text-align:center;font-size:9px;color:#475569;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+.hidden{display:none}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.blink-a{animation:blink 1s infinite}
+.blink-b{animation:blink 1s infinite .5s}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-label">Portslade Level Crossing</div>
+    <div class="hdr-sub">Boundary Road · <span id="clock">--:--:--</span></div>
+  </div>
+
+  <div class="status-card" id="statusCard">
+    <div class="status-title" id="statusTitle">LOADING...</div>
+    <div class="status-msg" id="statusMsg">Loading schedule...</div>
+    <div class="status-time hidden" id="statusTime"></div>
+  </div>
+
+  <div class="barrier-wrap">
+    <svg width="200" height="100" viewBox="0 0 200 100" id="barrierSvg">
+      <rect x="15" y="20" width="8" height="80" rx="2" fill="#555"/>
+      <g id="barrierArm" style="transform-origin:19px 24px;transition:transform 1s ease">
+        <rect x="19" y="20" width="140" height="8" rx="3" id="armBar"/>
+        <rect x="35" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
+        <rect x="63" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
+        <rect x="91" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
+        <rect x="119" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
+        <rect x="147" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
+      </g>
+      <circle cx="19" cy="12" r="6" id="lightA" fill="#DC2626" opacity="0"/>
+      <circle cx="170" cy="12" r="6" id="lightB" fill="#DC2626" opacity="0"/>
+      <line x1="0" y1="95" x2="200" y2="95" stroke="#888" stroke-width="3" stroke-dasharray="10,8"/>
+      <text x="100" y="92" text-anchor="middle" fill="#888" font-size="8" font-family="monospace">BOUNDARY ROAD</text>
+    </svg>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Next Close</div>
+      <div class="card-value" id="nextCloseCountdown" style="color:#475569">--</div>
+      <div class="card-sub" id="nextCloseTime"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Next Open</div>
+      <div class="card-value" id="nextOpenCountdown" style="color:#475569">--</div>
+      <div class="card-sub" id="nextOpenTime"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Data</div>
+      <div class="card-value" id="dataMode" style="font-size:12px;color:#94A3B8">TIMETABLE</div>
+      <div class="card-sub" id="lastRefreshTime">--</div>
+    </div>
+  </div>
+
+  <div class="section" id="configSection">
+    <div class="config-toggle" onclick="toggleConfig()">
+      <span id="configLabel">🔌 Connect Live Data (Optional)</span>
+      <span id="configArrow">▼</span>
+    </div>
+    <div class="config-body hidden" id="configBody">
+      <div class="config-desc">Free account at <a href="https://api.rtt.io" target="_blank">api.rtt.io</a> for live train positions. Without this, timetable estimates are used.</div>
+      <input class="input" id="rttUser" placeholder="RTT Username" autocomplete="username" autocapitalize="none">
+      <input class="input" id="rttPass" placeholder="RTT Password" type="password" autocomplete="current-password">
+      <button class="connect-btn" onclick="connectRtt()">Connect</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-hdr">
+      <span>Upcoming Trains</span>
+      <button class="refresh-btn" onclick="refreshData()">↻ Refresh</button>
+    </div>
+    <div id="trainList"><div class="empty">Loading...</div></div>
+  </div>
+
+  <div class="section">
+    <div style="font-size:12px;font-weight:600;margin-bottom:6px">ℹ️ How This Works</div>
+    <div class="info-text" id="infoText">
+      Barriers typically close ~2 min before a train arrives and open ~30 sec after it passes. If two trains pass within 5 min, barriers may stay closed between them.
+    </div>
+  </div>
+
+  <div class="error hidden" id="errorBox"></div>
+  <div class="footer">Estimates only · Not a safety system · Always obey signals & barriers</div>
+</div>
+
+<script>
+const BARRIER_CLOSE_BEFORE=2,BARRIER_OPEN_AFTER=.5,CONSECUTIVE_WINDOW=5;
+let trains=[],closurePeriods=[],rttUser="",rttPass="",hasCredentials=false,apiMode="timetable",nextCloseTime=null,nextOpenTime=null;
+
+function $(id){return document.getElementById(id)}
+function fmtTime(d){if(!d)return"--:--";return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}
+function fmtTimeShort(d){if(!d)return"";return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}
+function fmtCountdown(ms){if(ms<=0)return"NOW";const s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60;return m>0?m+"m "+sec+"s":sec+"s"}
+
+function getStatusColors(status){
+  switch(status){
+    case"CLOSED":return{bg:"#DC2626",text:"#FFF",glow:"0 0 30px rgba(220,38,38,.5)"};
+    case"CLOSING_SOON":return{bg:"#F59E0B",text:"#000",glow:"0 0 30px rgba(245,158,11,.5)"};
+    case"OPEN":return{bg:"#16A34A",text:"#FFF",glow:"0 0 30px rgba(22,163,74,.5)"};
+    default:return{bg:"#6B7280",text:"#FFF",glow:"none"};
+  }
+}
+
+function generateTimetable(){
+  const now=new Date(),day=now.getDay(),isWkd=day>=1&&day<=5,isSat=day===6;
+  let entries=[];
+  if(isWkd){
+    const t=[
+      ["0525","e","Shoreham","Brighton"],["0540","w","Brighton","Southampton"],
+      ["0555","e","Southampton","Brighton"],["0605","w","Brighton","Worthing"],
+      ["0615","e","Worthing","Brighton"],["0625","w","Brighton","Southampton"],
+      ["0635","e","Littlehampton","Brighton"],["0645","w","Brighton","Littlehampton"],
+      ["0655","e","Southampton","Brighton"],["0705","w","Brighton","Southampton"],
+      ["0715","e","Worthing","Brighton"],["0725","w","Brighton","Worthing"],
+      ["0735","e","Southampton","Brighton"],["0745","w","Brighton","Southampton"],
+      ["0755","e","Littlehampton","Brighton"],["0805","w","Brighton","Littlehampton"],
+      ["0815","e","Southampton","Brighton"],["0825","w","Brighton","Southampton"],
+      ["0835","e","Worthing","Brighton"],["0849","w","Brighton","Worthing"],
+      ["0905","e","Southampton","Brighton"],["0915","w","Brighton","Southampton"],
+      ["0925","e","Littlehampton","Brighton"],["0935","w","Brighton","Littlehampton"],
+      ["0949","e","Southampton","Brighton"],["1005","w","Brighton","Southampton"],
+      ["1019","e","Worthing","Brighton"],["1035","w","Brighton","Worthing"],
+      ["1049","e","Southampton","Brighton"],["1105","w","Brighton","Southampton"],
+      ["1119","e","Littlehampton","Brighton"],["1135","w","Brighton","Littlehampton"],
+      ["1149","e","Southampton","Brighton"],["1205","w","Brighton","Southampton"],
+      ["1219","e","Worthing","Brighton"],["1235","w","Brighton","Worthing"],
+      ["1249","e","Southampton","Brighton"],["1305","w","Brighton","Southampton"],
+      ["1319","e","Littlehampton","Brighton"],["1335","w","Brighton","Littlehampton"],
+      ["1349","e","Southampton","Brighton"],["1405","w","Brighton","Southampton"],
+      ["1419","e","Worthing","Brighton"],["1435","w","Brighton","Worthing"],
+      ["1449","e","Southampton","Brighton"],["1505","w","Brighton","Southampton"],
+      ["1519","e","Littlehampton","Brighton"],["1535","w","Brighton","Littlehampton"],
+      ["1549","e","Southampton","Brighton"],["1605","w","Brighton","Southampton"],
+      ["1615","e","Worthing","Brighton"],["1625","w","Brighton","Worthing"],
+      ["1635","e","Southampton","Brighton"],["1645","w","Brighton","Southampton"],
+      ["1655","e","Littlehampton","Brighton"],["1705","w","Brighton","Littlehampton"],
+      ["1715","e","Southampton","Brighton"],["1725","w","Brighton","Southampton"],
+      ["1735","e","Worthing","Brighton"],["1745","w","Brighton","Worthing"],
+      ["1755","e","Southampton","Brighton"],["1805","w","Brighton","Southampton"],
+      ["1820","e","Littlehampton","Brighton"],["1835","w","Brighton","Littlehampton"],
+      ["1849","e","Southampton","Brighton"],["1905","w","Brighton","Southampton"],
+      ["1919","e","Worthing","Brighton"],["1935","w","Brighton","Worthing"],
+      ["1949","e","Southampton","Brighton"],["2005","w","Brighton","Southampton"],
+      ["2025","e","Littlehampton","Brighton"],["2045","w","Brighton","Littlehampton"],
+      ["2105","e","Southampton","Brighton"],["2125","w","Brighton","Southampton"],
+      ["2155","e","Worthing","Brighton"],["2215","w","Brighton","Worthing"],
+      ["2245","e","Southampton","Brighton"],["2315","w","Brighton","Southampton"],
+      ["2345","e","Worthing","Brighton"],["0015","w","Brighton","Worthing"]
+    ];
+    entries=t;
+  } else if(isSat){
+    for(let h=6;h<=23;h++){
+      const hh=String(h).padStart(2,"0");
+      entries.push([hh+"05","e","West Coastway","Brighton"],[hh+"20","w","Brighton","West Coastway"]);
+      if(h>=7&&h<=20) entries.push([hh+"35","e","West Coastway","Brighton"],[hh+"50","w","Brighton","West Coastway"]);
+    }
+  } else {
+    for(let h=7;h<=23;h++){
+      const hh=String(h).padStart(2,"0");
+      entries.push([hh+"10","e","West Coastway","Brighton"],[hh+"40","w","Brighton","West Coastway"]);
+    }
+  }
+  return entries.map((e,i)=>{
+    const h=parseInt(e[0].substring(0,2)),m=parseInt(e[0].substring(2,4));
+    const dt=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0);
+    if(h<3&&i>0)dt.setDate(dt.getDate()+1);
+    return{id:"TT-"+i,origin:e[2],destination:e[3],bestTime:dt,isRealtime:false,direction:e[1]==="e"?"east":"west",operator:"Southern / GWR"};
+  });
+}
+
+function parseRttTime(ts,dateStr){
+  if(!ts||!dateStr)return null;
+  const h=parseInt(ts.substring(0,2)),m=parseInt(ts.substring(2,4)),s=ts.length>4?parseInt(ts.substring(4,6)):0;
+  const p=dateStr.split("-");
+  return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]),h,m,s);
+}
+
+async function fetchRttData(){
+  if(!hasCredentials)return generateTimetable();
+  const now=new Date();
+  const dateStr=now.getFullYear()+"/"+String(now.getMonth()+1).padStart(2,"0")+"/"+String(now.getDate()).padStart(2,"0");
+  const dateKey=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
+  try{
+    const r=await fetch("https://api.rtt.io/api/v1/json/search/PLD/"+dateStr,{
+      headers:{Authorization:"Basic "+btoa(rttUser+":"+rttPass)}
+    });
+    if(!r.ok)throw new Error("API "+r.status);
+    const data=await r.json();
+    if(!data.services)return generateTimetable();
+    const parsed=data.services.map(svc=>{
+      const loc=svc.locationDetail;
+      const actual=loc.realtimeArrival||loc.realtimeDeparture;
+      const planned=loc.gbttBookedArrival||loc.gbttBookedDeparture;
+      const timeStr=actual||planned;
+      const passTime=parseRttTime(timeStr,dateKey);
+      const dest=loc.destination?.[0]?.description||"Unknown";
+      const orig=loc.origin?.[0]?.description||"Unknown";
+      const cancelled=loc.cancelReasonCode!=null||(loc.displayAs||"").includes("CANCEL");
+      return{id:svc.serviceUid,origin:orig,destination:dest,bestTime:passTime,isRealtime:!!actual,
+        direction:dest.match(/Brighton|Hove|London/i)?"east":"west",operator:svc.atocName||"Unknown",cancelled};
+    }).filter(t=>t.bestTime&&!t.cancelled).sort((a,b)=>a.bestTime-b.bestTime);
+    if(parsed.length>0){apiMode="live";return parsed;}
+  }catch(e){console.log("RTT error:",e);$("errorBox").textContent="RTT API error: "+e.message;$("errorBox").classList.remove("hidden");setTimeout(()=>$("errorBox").classList.add("hidden"),5000)}
+  return generateTimetable();
+}
+
+function computeClosures(trainList){
+  if(!trainList.length)return[];
+  const sorted=[...trainList].sort((a,b)=>a.bestTime-b.bestTime);
+  const periods=[];
+  let cs=null,ce=null;
+  for(const t of sorted){
+    const cl=new Date(t.bestTime.getTime()-BARRIER_CLOSE_BEFORE*60000);
+    const op=new Date(t.bestTime.getTime()+BARRIER_OPEN_AFTER*60000);
+    if(cs===null){cs=cl;ce=op}
+    else if(cl.getTime()-ce.getTime()<=CONSECUTIVE_WINDOW*60000){ce=new Date(Math.max(ce.getTime(),op.getTime()))}
+    else{periods.push({start:cs,end:ce});cs=cl;ce=op}
+  }
+  if(cs)periods.push({start:cs,end:ce});
+  return periods;
+}
+
+async function refreshData(){
+  try{
+    trains=await fetchRttData();
+    closurePeriods=computeClosures(trains);
+    $("lastRefreshTime").textContent=fmtTimeShort(new Date());
+    $("dataMode").textContent=apiMode==="live"?"LIVE":"TIMETABLE";
+    $("dataMode").style.color=apiMode==="live"?"#22D3EE":"#94A3B8";
+    $("infoText").textContent="Barriers typically close ~2 min before a train arrives and open ~30 sec after it passes. If two trains pass within 5 min, barriers may stay closed between them. "+(apiMode==="timetable"?"Currently using timetable estimates — connect a free RTT API account for live tracking.":"Using live train data from Realtime Trains.");
+    renderTrains();
+  }catch(e){console.error(e)}
+}
+
+function renderTrains(){
+  const now=new Date();
+  const upcoming=trains.filter(t=>t.bestTime>new Date(now.getTime()-60000)).slice(0,8);
+  if(!upcoming.length){$("trainList").innerHTML='<div class="empty">No upcoming trains</div>';return}
+  let html="";
+  for(const t of upcoming){
+    const ms=t.bestTime.getTime()-now.getTime();
+    const isPast=ms<0;
+    const dirColor=t.direction==="east"?"#38BDF8":"#FB923C";
+    const arrow=t.direction==="east"?"→":"←";
+    html+=`<div class="train-row" style="opacity:${isPast?.4:1}">
+      <div class="train-dir" style="color:${dirColor}">${arrow}</div>
+      <div class="train-info">
+        <div class="train-route">${t.origin} → ${t.destination}</div>
+        <div class="train-meta">${t.operator}${t.isRealtime?'<span class="live-dot">● LIVE</span>':''}</div>
+      </div>
+      <div class="train-time">
+        <div class="train-time-val">${fmtTimeShort(t.bestTime)}</div>
+        <div class="train-countdown" style="color:${ms>0?'#94A3B8':'#EF4444'}">${ms>0?fmtCountdown(ms):'passed'}</div>
+      </div>
+    </div>`;
+  }
+  $("trainList").innerHTML=html;
+}
+
+function updateStatus(){
+  const now=new Date();
+  $("clock").textContent=fmtTime(now);
+  let status="OPEN",msg="No upcoming closures found";
+  nextCloseTime=null;nextOpenTime=null;
+  let currentClosure=null,upcoming=null;
+  const t=now.getTime();
+  for(const p of closurePeriods){
+    if(t>=p.start.getTime()&&t<=p.end.getTime()){currentClosure=p;break}
+    if(p.start.getTime()>t&&!upcoming){upcoming=p}
+  }
+  if(currentClosure){
+    status="CLOSED";
+    nextOpenTime=currentClosure.end;
+    const reopenIn=fmtCountdown(currentClosure.end.getTime()-t);
+    msg="Barriers likely DOWN. Reopens in ~"+reopenIn;
+    $("statusTime").textContent="Opens ~"+fmtTimeShort(currentClosure.end);
+    $("statusTime").classList.remove("hidden");
+  } else if(upcoming){
+    const ms=upcoming.start.getTime()-t;
+    if(ms<=180000){status="CLOSING_SOON";msg="Closing in ~"+fmtCountdown(ms)}
+    else{status="OPEN";msg="Next closure in ~"+fmtCountdown(ms)}
+    nextCloseTime=upcoming.start;nextOpenTime=upcoming.end;
+    $("statusTime").classList.add("hidden");
+  } else{
+    msg="No more closures expected today";
+    $("statusTime").classList.add("hidden");
+  }
+
+  const c=getStatusColors(status);
+  const card=$("statusCard");
+  card.style.background=c.bg;card.style.color=c.text;card.style.boxShadow=c.glow;
+  $("statusTitle").textContent=status==="CLOSED"?"BARRIERS DOWN":status==="CLOSING_SOON"?"CLOSING SOON":"CROSSING CLEAR";
+  $("statusMsg").textContent=msg;
+
+  // Barrier animation
+  const arm=$("barrierArm"),bar=$("armBar"),la=$("lightA"),lb=$("lightB");
+  const stripes=document.querySelectorAll(".stripe");
+  if(status==="CLOSED"){
+    arm.style.transform="rotate(0deg)";bar.setAttribute("fill","#DC2626");
+    stripes.forEach(s=>s.setAttribute("fill","#FFF"));
+    la.setAttribute("opacity","1");la.classList.add("blink-a");la.classList.remove("blink-b");
+    lb.setAttribute("opacity","1");lb.classList.add("blink-b");lb.classList.remove("blink-a");
+  } else if(status==="CLOSING_SOON"){
+    arm.style.transform="rotate(-30deg)";bar.setAttribute("fill","#F59E0B");
+    stripes.forEach(s=>s.setAttribute("fill","#000"));
+    la.setAttribute("opacity","0");lb.setAttribute("opacity","0");
+    la.classList.remove("blink-a","blink-b");lb.classList.remove("blink-a","blink-b");
+  } else {
+    arm.style.transform="rotate(-80deg)";bar.setAttribute("fill","#16A34A");
+    stripes.forEach(s=>s.setAttribute("fill","#15803d"));
+    la.setAttribute("opacity","0");lb.setAttribute("opacity","0");
+    la.classList.remove("blink-a","blink-b");lb.classList.remove("blink-a","blink-b");
+  }
+
+  // Countdown cards
+  if(nextCloseTime){$("nextCloseCountdown").textContent=fmtCountdown(Math.max(0,nextCloseTime.getTime()-t));$("nextCloseCountdown").style.color="#F59E0B";$("nextCloseTime").textContent=fmtTimeShort(nextCloseTime)}
+  else{$("nextCloseCountdown").textContent="--";$("nextCloseCountdown").style.color="#475569";$("nextCloseTime").textContent=""}
+  if(nextOpenTime){$("nextOpenCountdown").textContent=fmtCountdown(Math.max(0,nextOpenTime.getTime()-t));$("nextOpenCountdown").style.color="#16A34A";$("nextOpenTime").textContent=fmtTimeShort(nextOpenTime)}
+  else{$("nextOpenCountdown").textContent="--";$("nextOpenCountdown").style.color="#475569";$("nextOpenTime").textContent=""}
+
+  renderTrains();
+}
+
+function toggleConfig(){
+  const body=$("configBody"),arrow=$("configArrow");
+  body.classList.toggle("hidden");
+  arrow.textContent=body.classList.contains("hidden")?"▼":"▲";
+}
+
+function connectRtt(){
+  rttUser=$("rttUser").value.trim();
+  rttPass=$("rttPass").value.trim();
+  if(!rttUser||!rttPass)return;
+  hasCredentials=true;
+  $("configLabel").textContent="✅ Live Data Connected";
+  $("configBody").classList.add("hidden");
+  $("configArrow").textContent="▼";
+  refreshData();
+}
+
+// Init
+refreshData();
+setInterval(updateStatus,1000);
+setInterval(refreshData,120000);
+</script>
+
+</body>
+</html>
