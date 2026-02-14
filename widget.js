@@ -47,9 +47,9 @@ function getVal(str, tag) {
 var i = str.indexOf(':' + tag + '>');
 if (i < 0) i = str.indexOf('<' + tag + '>');
 if (i < 0) return null;
-var start = str.indexOf('>', i) + 1;
+var start = i + tag.length + 2;
 var end = str.indexOf('<', start);
-if (start <= 0 || end < 0) return null;
+if (end < 0) return null;
 return str.substring(start, end);
 }
 
@@ -307,7 +307,5 @@ Script.complete();
 
 }
 await main();
-
-
 
 
