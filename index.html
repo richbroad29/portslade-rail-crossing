@@ -129,7 +129,7 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 <script>
 const NR_TOKEN="314e8e0f-87f4-4b59-a04e-8abd3187d5a9";
 const STATION_CRS="PLD";
-const BARRIER_CLOSE_BEFORE=1.3, BARRIER_OPEN_AFTER=0.5, CONSECUTIVE_WINDOW=0.3;
+const BARRIER_CLOSE_BEFORE=1.5, BARRIER_OPEN_AFTER=0.5, CONSECUTIVE_WINDOW=2;
 const CORS_PROXY="https://corsproxy.io/?url=";
 const NR_ENDPOINT="https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx";
 
@@ -242,7 +242,8 @@ function parseServices(xmlText,type){
       etaText:eta||"On time",
       direction,
       operator,
-      type
+      type,
+      dedupKey:(sta||"")+(dest||"")
     });
   }
   return services;
@@ -284,10 +285,9 @@ async function fetchNationalRail(){
 }
 
 function deduplicateTrains(trainList){
-  // Prefer arrivals over departures for the same service (arrival = when it reaches the crossing)
   const map=new Map();
   for(const t of trainList){
-    const key=t.scheduledTime?.getTime()+"-"+t.direction;
+    const key=t.dedupKey||(t.scheduledTime?.getTime()+"-"+t.destination);
     const existing=map.get(key);
     if(!existing){map.set(key,t)}
     else if(t.type==="arr"&&existing.type==="dep"){map.set(key,t)}
