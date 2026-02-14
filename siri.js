@@ -173,19 +173,12 @@ if (trains[j].tm > now) { nextTrain = trains[j]; break; }
 if (cur) {
 var opensIn = cd(cur.e.getTime() - now.getTime());
 speech = 'The crossing is likely closed right now. ';
-speech += 'Barriers should open in about ' + opensIn + '. ';
-if (nextTrain) {
-var trainDir = nextTrain.dir === 'east' ? 'towards Brighton' : 'towards the coast';
-speech += 'The next train is the service from ' + nextTrain.fr + ' to ' + nextTrain.to + ' ' + trainDir + '.';
-}
+speech += 'Barriers should open in about ' + opensIn + '.';
 } else if (up) {
 var closesIn = cd(up.s.getTime() - now.getTime());
 var duration = cd(up.e.getTime() - up.s.getTime());
 speech = 'The crossing is open. ';
-speech += 'It will likely close in about ' + closesIn + ' for about ' + duration + '. ';
-if (nextTrain) {
-speech += 'The next train is the service from ' + nextTrain.fr + ' to ' + nextTrain.to + '.';
-}
+speech += 'It will likely close in about ' + closesIn + ' for about ' + duration + '.';
 } else {
 speech = 'The crossing is open. No more closures are expected in the next couple of hours.';
 }
@@ -204,4 +197,5 @@ Script.complete();
 
 }
 await main();
+
 
