@@ -107,7 +107,7 @@ var e2 = pTime(et);
 var s2 = pTime(sch);
 if (e2 && s2) dl = Math.round((e2 - s2) / 60000);
 }
-trains.push({fr:fr, to:to, tm:tm, dir:dir, dl:dl, tp:type, k:(sch||'')+dir});
+trains.push({fr:fr, to:to, tm:tm, dir:dir, dl:dl, tp:type, k:(sch||'')+(to||'')});
 }
 return trains;
 }
