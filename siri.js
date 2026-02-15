@@ -4,8 +4,8 @@ var TOKEN = '314e8e0f-87f4-4b59-a04e-8abd3187d5a9';
 var WURL = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx';
 var Q = String.fromCharCode(34);
 var CLOSE_BEFORE = 1.5;
-var OPEN_AFTER_WEST = 0;
-var OPEN_AFTER_EAST = 0.75;
+var OPEN_AFTER_WEST = 0.75;
+var OPEN_AFTER_EAST = 0;
 var GAP = 2.5;
 
 function soap(t) {
