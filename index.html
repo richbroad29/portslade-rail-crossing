@@ -147,8 +147,8 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 
   <div class="section">
     <div class="link-row">
-      <a class="link-btn coffee-btn" href="https://www.buymeacoffee.com/richardbroad29" target="_blank">Buy Me a Coffee</a>
-      <a class="link-btn" href="mailto:richardbroad29@gmail.com?subject=New%20Crossing%20Request&body=I%27d%20like%20to%20request%20a%20new%20level%20crossing%20be%20added%3A%0A%0ACrossing%20name%3A%0ALocation%3A%0ANearest%20station%3A" target="_blank">Request New Crossing</a>
+      <a class="link-btn coffee-btn" href="https://buymeacoffee.com/richbroad29" target="_blank">Buy Me a Coffee</a>
+      <a class="link-btn" href="mailto:crossing@richbroad29.dev?subject=New%20Crossing%20Request&body=I%27d%20like%20to%20request%20a%20new%20level%20crossing%20be%20added%3A%0A%0ACrossing%20name%3A%0ALocation%3A%0ANearest%20station%3A" target="_blank">Request New Crossing</a>
     </div>
   </div>
 
@@ -168,7 +168,7 @@ var NR_ENDPOINT="https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx";
 var Q=String.fromCharCode(34);
 
 var trains=[],closurePeriods=[],nextCloseTime=null,nextOpenTime=null,apiMode="loading",lastError="";
-var feedbackLog=[];
+var FEEDBACK_URL='https://script.google.com/macros/s/AKfycbysyTa8ic8nSz2_-_wBKnrzss2DsNAnlIrFKYa9H_We1QrxRVXl1iKh6MvWSNdE7XjbAw/exec';
 
 function $(id){return document.getElementById(id)}
 function fmtTime(d){if(!d)return"--:--";return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}
@@ -483,10 +483,21 @@ function updateStatus(){
 
 function sendFeedback(state){
   var now=new Date();
-  feedbackLog.push({time:now.toISOString(),reported:state});
-  $("fbMsg").textContent="Thanks! You reported the crossing is "+state+" at "+fmtShort(now)+". This helps improve accuracy.";
+  var currentStatus=$("statusTitle").textContent;
+  $("fbMsg").textContent="Sending...";
   $("fbMsg").classList.remove("hidden");
-  setTimeout(function(){$("fbMsg").classList.add("hidden")},5000);
+  fetch(FEEDBACK_URL,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({timestamp:now.toISOString(),reported:state,predicted:currentStatus})
+  }).then(function(){
+    $("fbMsg").textContent="Thanks! You reported the crossing is "+state+" at "+fmtShort(now)+".";
+    setTimeout(function(){$("fbMsg").classList.add("hidden")},5000);
+  }).catch(function(){
+    $("fbMsg").textContent="Thanks! Feedback noted (offline).";
+    setTimeout(function(){$("fbMsg").classList.add("hidden")},5000);
+  });
 }
 
 refreshData();
@@ -496,4 +507,3 @@ setInterval(refreshData,60000);
 
 </body>
 </html>
-
