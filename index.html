@@ -139,7 +139,7 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
   <div class="section">
     <div style="font-size:12px;font-weight:600;margin-bottom:6px">How This Works</div>
     <div class="info-text" id="infoText">
-      Uses the National Rail Live Departure Boards API for real-time train predictions at Portslade station. Barriers close ~1.5 min before a train arrives. For westbound trains (arriving at station), barriers open immediately. For eastbound trains (departing), barriers open ~45 sec after. If two trains pass within 2.5 min, barriers stay closed between them.
+      Uses the National Rail Live Departure Boards API for real-time train predictions at Portslade station. Barriers close ~1.5 min before a train arrives. For eastbound trains (arriving at station from the coast), barriers open immediately. For westbound trains (departing towards the coast), barriers open ~45 sec after. If two trains pass within 2.5 min, barriers stay closed between them.
     </div>
   </div>
 
@@ -147,8 +147,8 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 
   <div class="section">
     <div class="link-row">
-      <a class="link-btn coffee-btn" href="https://buymeacoffee.com/richbroad29" target="_blank">Buy Me a Coffee</a>
-      <a class="link-btn" href="mailto:crossing@richbroad29.dev?subject=New%20Crossing%20Request&body=I%27d%20like%20to%20request%20a%20new%20level%20crossing%20be%20added%3A%0A%0ACrossing%20name%3A%0ALocation%3A%0ANearest%20station%3A" target="_blank">Request New Crossing</a>
+      <a class="link-btn coffee-btn" href="https://buymeacoffee.com/richardbroad29" target="_blank">Buy Me a Coffee</a>
+      <a class="link-btn" href="mailto:richardbroad29@gmail.com?subject=New%20Crossing%20Request&body=I%27d%20like%20to%20request%20a%20new%20level%20crossing%20be%20added%3A%0A%0ACrossing%20name%3A%0ALocation%3A%0ANearest%20station%3A" target="_blank">Request New Crossing</a>
     </div>
   </div>
 
@@ -160,8 +160,8 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 var NR_TOKEN="314e8e0f-87f4-4b59-a04e-8abd3187d5a9";
 var STATION_CRS="PLD";
 var BARRIER_CLOSE_BEFORE=1.5;
-var OPEN_AFTER_WEST=0;
-var OPEN_AFTER_EAST=0.75;
+var OPEN_AFTER_WEST=0.75;
+var OPEN_AFTER_EAST=0;
 var CONSECUTIVE_WINDOW=2.5;
 var CORS_PROXY="https://corsproxy.io/?url=";
 var NR_ENDPOINT="https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx";
