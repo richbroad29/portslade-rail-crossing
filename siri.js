@@ -4,8 +4,7 @@ var TOKEN = '314e8e0f-87f4-4b59-a04e-8abd3187d5a9';
 var WURL = 'https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx';
 var Q = String.fromCharCode(34);
 var CLOSE_BEFORE = 1.5;
-var OPEN_AFTER_WEST = 0.75;
-var OPEN_AFTER_EAST = 0;
+var OPEN_AFTER = 0.75;
 var GAP = 2.5;
 
 function soap(t) {
@@ -138,8 +137,7 @@ var cs = null;
 var ce = null;
 for (var i = 0; i < trains.length; i++) {
 var cl = new Date(trains[i].tm.getTime() - CLOSE_BEFORE * 60000);
-var openAfter = trains[i].dir === 'west' ? OPEN_AFTER_WEST : OPEN_AFTER_EAST;
-var op = new Date(trains[i].tm.getTime() + openAfter * 60000);
+var op = new Date(trains[i].tm.getTime() + OPEN_AFTER * 60000);
 if (cs === null) { cs = cl; ce = op; }
 else if (cl.getTime() - ce.getTime() <= GAP * 60000) { ce = new Date(Math.max(ce.getTime(), op.getTime())); }
 else { per.push({s:cs, e:ce}); cs = cl; ce = op; }
