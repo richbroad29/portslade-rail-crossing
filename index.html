@@ -167,6 +167,7 @@ var NR_ENDPOINT="https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx";
 var Q=String.fromCharCode(34);
 
 var trains=[],closurePeriods=[],nextCloseTime=null,nextOpenTime=null,apiMode="loading",lastError="";
+var trainHistory=[];
 var FEEDBACK_URL='https://script.google.com/macros/s/AKfycbysyTa8ic8nSz2_-_wBKnrzss2DsNAnlIrFKYa9H_We1QrxRVXl1iKh6MvWSNdE7XjbAw/exec';
 
 function $(id){return document.getElementById(id)}
@@ -362,6 +363,16 @@ async function refreshData(){
     var liveTrains=await fetchNationalRail();
     if(liveTrains.length>0){
       trains=deduplicateTrains(liveTrains);
+      for(var th=0;th<trains.length;th++){
+        var t=trains[th];
+        var found=false;
+        for(var hi=0;hi<trainHistory.length;hi++){
+          if(trainHistory[hi].dedupKey===t.dedupKey){found=true;trainHistory[hi]=t;break;}
+        }
+        if(!found) trainHistory.push(t);
+      }
+      var cutoff=new Date(new Date().getTime()-3600000);
+      trainHistory=trainHistory.filter(function(t){return t.bestTime>cutoff;});
       apiMode="live";
       $("apiStatus").className="api-status api-live";
       $("apiStatus").textContent="Live Data Connected";
@@ -484,9 +495,10 @@ function sendFeedback(state){
   var currentStatus=$("statusTitle").textContent;
   var lastTrain=null;
   var nextTrain=null;
-  for(var i=0;i<trains.length;i++){
-    if(trains[i].bestTime<=now) lastTrain=trains[i];
-    if(trains[i].bestTime>now&&!nextTrain) nextTrain=trains[i];
+  var allTrains=trainHistory.length>0?trainHistory:trains;
+  for(var i=0;i<allTrains.length;i++){
+    if(allTrains[i].bestTime<=now) lastTrain=allTrains[i];
+    if(allTrains[i].bestTime>now&&!nextTrain) nextTrain=allTrains[i];
   }
   var payload={
     timestamp:now.toISOString(),
