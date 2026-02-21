@@ -328,16 +328,26 @@ async function fetchNationalRail(){
 }
 
 function deduplicateTrains(trainList){
-  var map={};
-  for(var i=0;i<trainList.length;i++){
-    var t=trainList[i];
-    var key=t.dedupKey;
-    if(!map[key]){map[key]=t}
-    else if(t.type==="arr"&&map[key].type==="dep"){map[key]=t}
+  var sorted=trainList.slice().sort(function(a,b){return a.bestTime-b.bestTime;});
+  var results=[];
+  for(var i=0;i<sorted.length;i++){
+    var t=sorted[i];
+    var isDupe=false;
+    for(var j=0;j<results.length;j++){
+      var r=results[j];
+      if(r.destination===t.destination && Math.abs(r.bestTime.getTime()-t.bestTime.getTime())<=120000){
+        // For eastbound (towards Brighton), prefer arrival time
+        // For westbound (towards coast), prefer departure time
+        if(r.direction==='east' && t.type==='arr') results[j]=t;
+        else if(r.direction==='west' && t.type==='dep') results[j]=t;
+        isDupe=true;
+        break;
+      }
+    }
+    if(!isDupe) results.push(t);
   }
-  var res=Object.values(map);
-  res.sort(function(a,b){return a.bestTime-b.bestTime;});
-  return res;
+  results.sort(function(a,b){return a.bestTime-b.bestTime;});
+  return results;
 }
 
 function computeClosures(trainList){
