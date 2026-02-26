@@ -1,40 +1,45 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no
 <meta name="apple-mobile-web-app-capable" content="yes">
+
+
+						
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Crossing">
 <meta name="theme-color" content="#0F172A">
 <title>Portslade Level Crossing</title>
+
+
+						
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFont,'SF Pro',system-ui,sans-serif;min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased}
-.wrap{max-width:480px;margin:0 auto;padding:16px 12px;padding-top:env(safe-area-inset-top,16px)}
+body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFont,'SF
+.wrap{max-width:480px;margin:0 auto;padding:16px 12px;padding-top:env(safe-area-inset-
 .hdr{text-align:center;margin-bottom:12px}
-.hdr-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#94A3B8;margin-bottom:4px}
+.hdr-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#94A3B8;ma
 .hdr-sub{font-size:10px;color:#64748B}
-.status-card{border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:16px;transition:all .5s}
+.status-card{border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:16px
 .status-title{font-size:28px;font-weight:700;margin-bottom:4px}
 .status-msg{font-size:14px;opacity:.9}
 .status-time{margin-top:8px;font-size:20px;font-weight:600}
 .barrier-wrap{display:flex;flex-direction:column;align-items:center;margin:16px 0}
 .cards{display:flex;gap:8px;margin-bottom:16px}
-.card{flex:1;background:#1E293B;border-radius:12px;padding:12px 10px;text-align:center}
-.card-label{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.card{flex:1;background:#1E293B;border-radius:12px;padding:12px 10px;text-align:center
+.card-label{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;ma
 .card-value{font-size:18px;font-weight:700}
 .card-sub{font-size:10px;color:#64748B;margin-top:2px}
 .section{background:#1E293B;border-radius:12px;padding:12px;margin-bottom:16px}
-.section-hdr{font-size:12px;font-weight:600;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
-.refresh-btn{background:none;border:1px solid #334155;border-radius:6px;color:#94A3B8;padding:2px 8px;font-size:10px;cursor:pointer}
+.section-hdr{font-size:12px;font-weight:600;margin-bottom:10px;display:flex;justify-co
+.refresh-btn{background:none;border:1px solid #334155;border-radius:6px;color:#94A3B8;
 .refresh-btn:active{background:#334155}
-.train-row{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #334155}
+.train-row{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px s
 .train-row:last-child{border-bottom:none}
 .train-dir{flex-shrink:0;font-size:14px;width:20px;text-align:center}
 .train-info{flex:1;min-width:0}
-.train-route{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.train-route{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-ov
 .train-meta{font-size:10px;color:#64748B}
 .train-time{text-align:right;flex-shrink:0}
 .train-time-val{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -43,23 +48,74 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 .delay-badge{color:#F59E0B;margin-left:4px;font-weight:600}
 .empty{text-align:center;color:#64748B;font-size:12px;padding:16px}
 .info-text{font-size:11px;color:#94A3B8;line-height:1.5}
-.error{background:#7F1D1D;border-radius:8px;padding:10px;font-size:11px;color:#FCA5A5;margin-bottom:12px}
-.footer{text-align:center;font-size:9px;color:#475569;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px))}
+
+
+					
+				
+			
+			
+				
+					
+">
+					
+Pro',s
+top,16p
+
+					
+rgin-bo
+;transi
+
+					
+} rgin-bo
+					
+ntent:s
+padding
+
+					
+olid #3
+					
+erflow:
+				
+			
+		
+		
+			
+				 				
+					
+						
+.error{background:#7F1D1D;border-radius:8px;padding:10px;font-size:11px;color:#FCA5A5;
+.footer{text-align:center;font-size:9px;color:#475569;padding-bottom:calc(20px + env(s
 .hidden{display:none}
-.api-status{font-size:10px;padding:4px 8px;border-radius:6px;display:inline-block;margin-top:4px}
+.api-status{font-size:10px;padding:4px 8px;border-radius:6px;display:inline-block;marg
 .api-live{background:#064E3B;color:#6EE7B7}
 .api-fallback{background:#78350F;color:#FCD34D}
 .api-error{background:#7F1D1D;color:#FCA5A5}
 .feedback-btns{display:flex;gap:8px;margin-top:10px}
-.fb-btn{flex:1;padding:10px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;text-align:center}
+.fb-btn{flex:1;padding:10px;border-radius:8px;border:none;font-size:12px;font-weight:6
 .fb-btn:active{opacity:.7}
+
+
+						
 .fb-open{background:#064E3B;color:#6EE7B7}
 .fb-closed{background:#7F1D1D;color:#FCA5A5}
 .fb-msg{font-size:11px;color:#6EE7B7;text-align:center;margin-top:8px}
 .link-row{display:flex;gap:8px;margin-top:8px}
-.link-btn{flex:1;padding:10px;border-radius:8px;border:1px solid #334155;background:none;color:#94A3B8;font-size:11px;text-align:center;cursor:pointer;text-decoration:none;display:block}
+.link-btn{flex:1;padding:10px;border-radius:8px;border:1px solid #334155;background:no
 .link-btn:active{background:#334155}
 .coffee-btn{background:#FBBF24;color:#000;border:none;font-weight:600}
+.setup-row{display:flex;gap:8px;margin-bottom:8px}
+.setup-btn{flex:1;padding:10px;border-radius:8px;border:1px solid #334155;background:#
+.setup-btn:active{background:#334155}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);
+.modal{background:#1E293B;border-radius:16px;padding:20px;max-width:400px;width:100%;m
+.modal h3{font-size:16px;font-weight:700;margin-bottom:12px}
+
+
+						
+.modal p{font-size:13px;color:#94A3B8;line-height:1.6;margin-bottom:8px}
+.modal ol{font-size:13px;color:#CBD5E1;line-height:1.8;padding-left:20px;margin-bottom
+.modal-close{width:100%;padding:10px;border-radius:8px;border:none;background:#3B82F6;
+.modal-close:active{background:#2563EB}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 .blink-a{animation:blink 1s infinite}
 .blink-b{animation:blink 1s infinite .5s}
@@ -69,133 +125,572 @@ body{background:#0F172A;color:#E2E8F0;font-family:-apple-system,BlinkMacSystemFo
 </head>
 <body>
 <div class="wrap">
-  <div class="hdr">
+
+
+						
+ <div class="hdr">
     <div class="hdr-label">Portslade Level Crossing</div>
     <div class="hdr-sub">Boundary Road · <span id="clock">--:--:--</span></div>
     <div id="apiStatus" class="api-status api-fallback">Loading...</div>
-  </div>
 
-  <div class="status-card" id="statusCard">
+
+						
+</div>
+						
+ <div class="status-card" id="statusCard">
     <div class="status-title" id="statusTitle">LOADING...</div>
     <div class="status-msg" id="statusMsg">Fetching live train data...</div>
     <div class="status-time hidden" id="statusTime"></div>
-  </div>
 
-  <div class="barrier-wrap">
-    <svg width="200" height="100" viewBox="0 0 200 100">
-      <rect x="15" y="20" width="8" height="80" rx="2" fill="#555"/>
-      <g id="barrierArm" style="transform-origin:19px 24px;transition:transform 1s ease">
-        <rect x="19" y="20" width="140" height="8" rx="3" id="armBar"/>
-        <rect x="35" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
-        <rect x="63" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
-        <rect x="91" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
-        <rect x="119" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
-        <rect x="147" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
-      </g>
-      <circle cx="19" cy="12" r="6" id="lightA" fill="#DC2626" opacity="0"/>
-      <circle cx="170" cy="12" r="6" id="lightB" fill="#DC2626" opacity="0"/>
-      <line x1="0" y1="95" x2="200" y2="95" stroke="#888" stroke-width="3" stroke-dasharray="10,8"/>
-      <text x="100" y="92" text-anchor="middle" fill="#888" font-size="8" font-family="monospace">BOUNDARY ROAD</text>
-    </svg>
-  </div>
 
-  <div class="cards">
-    <div class="card">
-      <div class="card-label">Next Close</div>
-      <div class="card-value" id="nextCloseCountdown" style="color:#475569">--</div>
-      <div class="card-sub" id="nextCloseTime"></div>
-    </div>
-    <div class="card">
-      <div class="card-label">Next Open</div>
-      <div class="card-value" id="nextOpenCountdown" style="color:#475569">--</div>
-      <div class="card-sub" id="nextOpenTime"></div>
-    </div>
-    <div class="card">
-      <div class="card-label">Data</div>
-      <div class="card-value" id="dataMode" style="font-size:12px;color:#94A3B8">LOADING</div>
-      <div class="card-sub" id="lastRefreshTime">--</div>
-    </div>
-  </div>
+						
+</div>
+					
+				
+			
+			
+				
+					
+margin-
+afe-are
 
-  <!-- Feedback Section -->
+					
+in-top:
+					
+00;curs
+					
+ne;colo
+					
+1E293B;
+					
+z-index
+ax-heig
 
-  <div class="section">
-    <div style="font-size:12px;font-weight:600;margin-bottom:6px">Is this accurate right now?</div>
-    <div class="feedback-btns">
-      <button class="fb-btn fb-open" onclick="sendFeedback('open')">Crossing IS Open</button>
-      <button class="fb-btn fb-closed" onclick="sendFeedback('closed')">Crossing IS Closed</button>
-    </div>
-    <div class="fb-msg hidden" id="fbMsg"></div>
-  </div>
+					
+:12px}
+color:#
 
-  <div class="section">
-    <div class="section-hdr">
-      <span>Upcoming Trains</span>
-      <button class="refresh-btn" onclick="refreshData()">Refresh</button>
-    </div>
-    <div id="trainList"><div class="empty">Fetching live data...</div></div>
-  </div>
+				
+			
+		
+		
+			
+				 				
+					
+						
+<div class="barrier-wrap">
+  <svg width="200" height="100" viewBox="0 0 200 100">
 
-  <div class="section">
-    <div style="font-size:12px;font-weight:600;margin-bottom:6px">How This Works</div>
-    <div class="info-text" id="infoText">
-      Barriers close ~1.5 min before a train arrives and open ~45 sec after it passes. If two trains pass within 2.5 min, barriers stay closed between them.
-    </div>
-  </div>
 
-  <!-- Links Section -->
+						
+   <rect x="15" y="20" width="8" height="80" rx="2" fill="#555"/>
+    <g id="barrierArm" style="transform-origin:19px 24px;transition:transform 1s eas
 
-  <div class="section">
-    <div class="link-row">
-      <a class="link-btn coffee-btn" href="https://buymeacoffee.com/richardbroad29" target="_blank">Buy Me a Coffee</a>
-      <a class="link-btn" href="mailto:richardbroad29@gmail.com?subject=New%20Crossing%20Request&body=I%27d%20like%20to%20request%20a%20new%20level%20crossing%20be%20added%3A%0A%0ACrossing%20name%3A%0ALocation%3A%0ANearest%20station%3A" target="_blank">Request New Crossing</a>
-    </div>
-  </div>
 
-  <div class="error hidden" id="errorBox"></div>
-  <div class="footer">Estimates only · Not a safety system · Always obey signals & barriers</div>
+						
+     <rect x="19" y="20" width="140" height="8" rx="3" id="armBar"/>
+      <rect x="35" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
+      <rect x="63" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
+      <rect x="91" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/>
+      <rect x="119" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/
+      <rect x="147" y="20" width="14" height="8" rx="1" class="stripe" opacity=".3"/
+
+
+						
+   </g>
+    <circle cx="19" cy="12" r="6" id="lightA" fill="#DC2626" opacity="0"/>
+    <circle cx="170" cy="12" r="6" id="lightB" fill="#DC2626" opacity="0"/>
+    <line x1="0" y1="95" x2="200" y2="95" stroke="#888" stroke-width="3" stroke-dash
+    <text x="100" y="92" text-anchor="middle" fill="#888" font-size="8" font-family=
+
+
+						
+ </svg>
 </div>
 
+
+						
+<div class="cards">
+  <div class="card">
+
+
+						
+   <div class="card-label">Next Close</div>
+    <div class="card-value" id="nextCloseCountdown" style="color:#475569">--</div>
+    <div class="card-sub" id="nextCloseTime"></div>
+
+
+						
+ </div>
+  <div class="card">
+
+
+						
+   <div class="card-label">Next Open</div>
+    <div class="card-value" id="nextOpenCountdown" style="color:#475569">--</div>
+    <div class="card-sub" id="nextOpenTime"></div>
+
+
+						
+ </div>
+  <div class="card">
+
+
+						
+   <div class="card-label">Data</div>
+    <div class="card-value" id="dataMode" style="font-size:12px;color:#94A3B8">LOADI
+    <div class="card-sub" id="lastRefreshTime">--</div>
+
+
+						
+ </div>
+</div>
+
+
+						
+<!-- Feedback Section -->
+<div class="section">
+
+
+						
+ <div style="font-size:12px;font-weight:600;margin-bottom:6px">Help improve accurac
+  <div style="font-size:11px;color:#94A3B8;margin-bottom:8px">Tap when you see the b
+  <div class="feedback-btns">
+
+
+						
+   <button class="fb-btn fb-closed" onclick="sendFeedback('closing')">Barriers Clos
+
+
+						
+   <button class="fb-btn fb-open" onclick="sendFeedback('opening')">Barriers Openin
+  </div>
+
+
+						
+ <div class="fb-msg hidden" id="fbMsg"></div>
+</div>
+
+
+					
+				
+			
+			
+				
+					
+e">
+					
+> >
+					
+array="
+"monosp
+
+				
+			
+			
+				
+					
+NG</div
+					
+y</div>
+arriers
+
+					
+ing Now
+g Now</
+
+				
+			
+		
+		
+			
+				 				
+					
+						
+ <div class="section">
+    <div class="section-hdr">
+
+
+						
+     <span>Upcoming Trains</span>
+
+
+						
+     <button class="refresh-btn" onclick="refreshData()">Refresh</button>
+    </div>
+
+
+						
+   <div id="trainList"><div class="empty">Fetching live data...</div></div>
+  </div>
+
+
+						
+ <div class="section">
+    <div style="font-size:12px;font-weight:600;margin-bottom:6px">How This Works</div>
+    <div class="info-text">
+
+
+						
+     Uses the National Rail Live Departure Boards API for real-time train predictions
+    </div>
+
+
+						
+</div>
+						
+ <!-- Setup Section -->
+  <div class="section">
+
+
+						
+   <div style="font-size:12px;font-weight:600;margin-bottom:8px">Get Quick Access</di
+    <div class="setup-row">
+
+
+						
+     <button class="setup-btn" onclick="showModal('homescreen')">Add to Home Screen</
+
+
+						
+     <button class="setup-btn" onclick="showModal('voice')"><span id="voiceBtnLabel">
+    </div>
+
+
+						
+   <div class="link-row">
+      <a class="link-btn coffee-btn" href="https://buymeacoffee.com/richardbroad29" ta
+      <a class="link-btn" href="mailto:richardbroad29@gmail.com?subject=New%20Crossing
+
+
+						
+   </div>
+  </div>
+
+
+						
+ <div class="error hidden" id="errorBox"></div>
+
+
+						
+ <div class="footer">Estimates only · Not a safety system · Always obey signals & bar
+</div>
+
+
+						
+<!-- Modal -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal(event)">
+
+
+						
+ <div class="modal" onclick="event.stopPropagation()">
+    <h3 id="modalTitle"></h3>
+    <div id="modalBody"></div>
+    <button class="modal-close" onclick="closeModal()">Got it</button>
+
+
+						
+ </div>
+</div>
+
+
+						
 <script>
 var NR_TOKEN="314e8e0f-87f4-4b59-a04e-8abd3187d5a9";
 var STATION_CRS="PLD";
 var BARRIER_CLOSE_BEFORE=1.5;
 var OPEN_AFTER=0.75;
+
+
+					
+				
+			
+			
+				
+					
+at Por
+					
+v>
+					
+button>
+Add to
+
+					
+rget="_
+%20Requ
+
+					
+riers</
+				
+			
+		
+		
+			
+				 				
+					
+						
 var CONSECUTIVE_WINDOW=2.5;
 var CORS_PROXY="https://corsproxy.io/?url=";
 var NR_ENDPOINT="https://lite.realtime.nationalrail.co.uk/OpenLDBWS/ldb12.asmx";
 var Q=String.fromCharCode(34);
+var FEEDBACK_URL='https://script.google.com/macros/s/AKfycbysyTa8ic8nSz2_-_wBKnrzss2Ds
+var APP_URL='https://richbroad29.github.io/rail-crossing-uk/portslade/';
 
-var trains=[],closurePeriods=[],nextCloseTime=null,nextOpenTime=null,apiMode="loading",lastError="";
+
+						
+var trains=[],closurePeriods=[],nextCloseTime=null,nextOpenTime=null,apiMode="loading"
 var trainHistory=[];
-var FEEDBACK_URL='https://script.google.com/macros/s/AKfycbysyTa8ic8nSz2_-_wBKnrzss2DsNAnlIrFKYa9H_We1QrxRVXl1iKh6MvWSNdE7XjbAw/exec';
 
-function $(id){return document.getElementById(id)}
-function fmtTime(d){if(!d)return"--:--";return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",second:"2-digit"})}
-function fmtShort(d){if(!d)return"";return d.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})}
-function fmtCountdown(ms){if(ms<=0)return"NOW";var s=Math.floor(ms/1000),m=Math.floor(s/60),sec=s%60;return m>0?m+"m "+sec+"s":sec+"s"}
-function getColors(st){
-  switch(st){
-    case"CLOSED":return{bg:"#DC2626",text:"#FFF",glow:"0 0 30px rgba(220,38,38,.5)"};
-    case"CLOSING_SOON":return{bg:"#F59E0B",text:"#000",glow:"0 0 30px rgba(245,158,11,.5)"};
-    case"OPEN":return{bg:"#16A34A",text:"#FFF",glow:"0 0 30px rgba(22,163,74,.5)"};
-    default:return{bg:"#6B7280",text:"#FFF",glow:"none"};
-  }
+
+						
+// Device detection
+var isIOS=/iPhone|iPad|iPod/.test(navigator.userAgent);
+var isAndroid=/Android/.test(navigator.userAgent);
+
+
+						
+// Update voice button label
+if(!isIOS) {
+
+
+						
+ var vbl=document.getElementById('voiceBtnLabel');
+
+
+						
+ if(vbl) vbl.textContent='Add to Google Assistant';
 }
 
+
+						
+function $(id){return document.getElementById(id)}
+function fmtTime(d){if(!d)return"--:--";return d.toLocaleTimeString("en-GB",{hour:"2-d
+function fmtShort(d){if(!d)return"";return d.toLocaleTimeString("en-GB",{hour:"2-digit
+function fmtCountdown(ms){if(ms<=0)return"NOW";var s=Math.floor(ms/1000),m=Math.floor(
+function getColors(st){
+
+
+						
+ switch(st){
+    case"CLOSED":return{bg:"#DC2626",text:"#FFF",glow:"0 0 30px rgba(220,38,38,.5)"};
+    case"CLOSING_SOON":return{bg:"#F59E0B",text:"#000",glow:"0 0 30px rgba(245,158,11,
+    case"OPEN":return{bg:"#16A34A",text:"#FFF",glow:"0 0 30px rgba(22,163,74,.5)"};
+    default:return{bg:"#6B7280",text:"#FFF",glow:"none"};
+
+
+						
+} }
+						
+function showModal(type){
+  var title='',body='';
+  if(type==='homescreen'){
+
+
+						
+   if(isIOS){
+      title='Add to Home Screen — iPhone';
+      body='<ol>';
+      body+='<li>Make sure you are viewing this page in <strong>Safari</strong> (not C
+      body+='<li>Tap the <strong>Share button</strong> at the bottom of the screen (th
+      body+='<li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>';
+      body+='<li>Name it <strong>"Crossing"</strong> or whatever you prefer</li>';
+      body+='<li>Tap <strong>Add</strong> in the top right</li>';
+      body+='</ol>';
+      body+='<p>The app will appear on your home screen and open full-screen like a na
+
+
+						
+   } else if(isAndroid){
+
+
+					
+				
+			
+			
+				
+					
+NAnlIrF
+					
+,lastEr
+				
+			
+			
+				
+					
+igit",m
+",minut
+s/60),s
+
+					
+.5)"};
+				
+			
+			
+				
+					
+hrome o
+e squar
+
+				
+			
+			
+				
+					
+tive ap
+				
+			
+		
+		
+			
+				 				
+					
+						
+   title='Add to Home Screen — Android';
+    body='<ol>';
+    body+='<li>Open this page in <strong>Chrome</strong></li>';
+    body+='<li>Tap the <strong>three-dot menu</strong> in the top right corner</li>'
+    body+='<li>Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</s
+    body+='<li>Name it <strong>"Crossing"</strong> or whatever you prefer</li>';
+    body+='<li>Tap <strong>Add</strong></li>';
+    body+='</ol>';
+    body+='<p>The app will appear on your home screen and open like a native app.</p
+
+
+						
+ } else {
+    title='Add to Home Screen';
+    body='<p><strong>On iPhone (Safari):</strong></p><ol>';
+    body+='<li>Tap the Share button (square with arrow)</li>';
+    body+='<li>Tap "Add to Home Screen"</li>';
+    body+='<li>Tap Add</li></ol>';
+    body+='<p><strong>On Android (Chrome):</strong></p><ol>';
+    body+='<li>Tap the three-dot menu</li>';
+    body+='<li>Tap "Add to Home screen"</li>';
+    body+='<li>Tap Add</li></ol>';
+
+
+						
+ }
+} else if(type==='voice'){
+
+
+						
+ if(isIOS){
+    title='Add to Siri — iPhone';
+    body='<p>Ask the crossing status hands-free with Siri:</p>';
+    body+='<ol>';
+    body+='<li>Install <strong><a href="https://apps.apple.com/app/scriptable/id1405
+    body+='<li>Open Scriptable and create a new script</li>';
+    body+='<li>Paste these 3 lines:<br><div style="background:#0F172A;padding:8px;bo
+    body+="var r = new Request('https://raw.githubusercontent.com/richbroad29/portsl
+    body+="var code = await r.loadString();<br>";
+    body+="await eval('(async()=>{' + code + '})()');</div></li>";
+    body+='<li>Name the script <strong>"Crossing Siri"</strong></li>';
+    body+='<li>Open the <strong>Shortcuts</strong> app</li>';
+    body+='<li>Create a new shortcut named <strong>"Is the crossing open"</strong></
+    body+='<li>Add action: search <strong>Scriptable</strong> &rarr; <strong>Run Scr
+    body+='<li>Add action: <strong>Speak Text</strong> &rarr; set to Shortcut Input<
+    body+='<li>In the Scriptable action, turn off <strong>"Run In App"</strong></li>
+    body+='</ol>';
+    body+='<p>Now say <strong>"Hey Siri, is the crossing open"</strong> and it will
+
+
+						
+ } else if(isAndroid){
+    title='Add to Google Assistant — Android';
+    body='<p>You can get quick access via Google Assistant:</p>';
+    body+='<ol>';
+    body+='<li>Open the <strong>Google app</strong></li>';
+    body+='<li>Tap your profile picture &rarr; <strong>Settings</strong> &rarr; <str
+    body+='<li>Go to <strong>Routines</strong></li>';
+    body+='<li>Create a new routine</li>';
+
+
+					
+				
+			
+			
+				
+					
+; trong><
+					
+>';
+				
+			
+			
+				
+					
+459188"
+					
+rder-ra
+ade-rai
+
+					
+li>';
+ipt</st
+/li>';
+';
+
+					
+tell yo
+					
+ong>Goo
+				
+			
+		
+		
+			
+				 				
+					
+						
+     body+='<li>Set the trigger phrase to <strong>"Is the crossing open"</strong></li
+      body+='<li>Add action: <strong>Open website</strong> &rarr; enter:<br><div style
+      body+='</ol>';
+      body+='<p>Now say <strong>"Hey Google, is the crossing open"</strong> and it wil
+
+
+						
+   } else {
+      title='Voice Assistant Setup';
+      body='<p><strong>iPhone (Siri):</strong> Uses Scriptable + Shortcuts to speak th
+      body+='<p><strong>Android (Google Assistant):</strong> Create a routine that ope
+
+
+						
+} }
+						
+ $('modalTitle').textContent=title;
+  $('modalBody').innerHTML=body;
+  $('modalOverlay').classList.remove('hidden');
+
+
+						
+}
+						
+function closeModal(e){
+  if(e&&e.target&&e.target.id!=='modalOverlay') return;
+  $('modalOverlay').classList.add('hidden');
+
+
+						
+}
+						
 function buildSoap(type) {
-  var method = type === 'arr' ? 'GetArrBoardWithDetailsRequest' : 'GetDepBoardWithDetailsRequest';
+  var method = type === 'arr' ? 'GetArrBoardWithDetailsRequest' : 'GetDepBoardWithDeta
   var s = '<?xml version=' + Q + '1.0' + Q + '?>';
-  s += '<soap:Envelope xmlns:soap=' + Q + 'http://www.w3.org/2003/05/soap-envelope' + Q;
+  s += '<soap:Envelope xmlns:soap=' + Q + 'http://www.w3.org/2003/05/soap-envelope' +
   s += ' xmlns:typ=' + Q + 'http://thalesgroup.com/RTTI/2013-11-28/Token/types' + Q;
   s += ' xmlns:ldb=' + Q + 'http://thalesgroup.com/RTTI/2021-11-01/ldb/' + Q + '>';
-  s += '<soap:Header><typ:AccessToken><typ:TokenValue>' + NR_TOKEN + '</typ:TokenValue></typ:AccessToken></soap:Header>';
+  s += '<soap:Header><typ:AccessToken><typ:TokenValue>' + NR_TOKEN + '</typ:TokenValue
   s += '<soap:Body><ldb:' + method + '><ldb:numRows>15</ldb:numRows>';
   s += '<ldb:crs>' + STATION_CRS + '</ldb:crs><ldb:timeWindow>120</ldb:timeWindow>';
   s += '</ldb:' + method + '></soap:Body></soap:Envelope>';
   return s;
-}
 
+
+						
+}
+						
 function parseTimeStr(timeStr){
   if(!timeStr||timeStr.indexOf(':')<0)return null;
   var now=new Date();
@@ -204,34 +699,81 @@ function parseTimeStr(timeStr){
   var d=new Date(now.getFullYear(),now.getMonth(),now.getDate(),h,m,0);
   if(d.getTime()<now.getTime()-6*3600000)d.setDate(d.getDate()+1);
   return d;
-}
 
+
+						
+}
+						
 function getVal(str, tag) {
   var i = str.indexOf(':' + tag + '>');
   if (i < 0) i = str.indexOf('<' + tag + '>');
   if (i < 0) return null;
-  var start = i + tag.length + 2;
+
+
+					
+				
+			
+			
+				
+					
+>'; ="backg
+					
+l open
+					
+e cross
+ns this
+
+				
+			
+			
+				
+					
+ilsRequ Q;
+					
+></typ:
+				
+			
+		
+		
+			
+				 				
+					
+						
+ var start = i + tag.length + 2;
   var end = str.indexOf('<', start);
   if (end < 0) return null;
   return str.substring(start, end);
-}
 
+
+						
+}
+						
 function isEastOrigin(str) {
   if (!str) return false;
   var lower = str.toLowerCase();
   return lower.indexOf('brighton') >= 0 || lower.indexOf('hove') >= 0 ||
-    lower.indexOf('london') >= 0 || lower.indexOf('gatwick') >= 0 ||
-    lower.indexOf('croydon') >= 0 || lower.indexOf('haywards') >= 0;
+
+
+						
+   lower.indexOf('london') >= 0 || lower.indexOf('gatwick') >= 0 ||
+
+
+						
+   lower.indexOf('croydon') >= 0 || lower.indexOf('haywards') >= 0;
 }
 
+
+						
 function parseXml(xml, type) {
   var results = [];
   var parts = xml.split('service>');
   for (var i = 0; i < parts.length; i++) {
-    var sv = parts[i];
+
+
+						
+   var sv = parts[i];
     if (sv.indexOf(':sta>') < 0 && sv.indexOf(':std>') < 0) continue;
     if (sv.toLowerCase().indexOf('iscancelled>true') >= 0) continue;
-
     var sta = getVal(sv, 'sta');
     var eta = getVal(sv, 'eta');
     var std = getVal(sv, 'std');
@@ -242,198 +784,399 @@ function parseXml(xml, type) {
     if (et && et !== 'On time' && et !== 'Delayed' && et.indexOf(':') >= 0) bt = et;
     var bestTime = parseTimeStr(bt);
     if (!bestTime) continue;
-
     var origBlock = sv.indexOf(':origin>');
     var destBlock = sv.indexOf(':destination>');
     var origin = '?', dest = '?';
     if (origBlock >= 0) {
-      var oc = sv.substring(origBlock, origBlock + 200);
-      origin = getVal(oc, 'locationName') || '?';
-    }
-    if (destBlock >= 0) {
-      var dc = sv.substring(destBlock, destBlock + 200);
-      dest = getVal(dc, 'locationName') || '?';
+
+
+						
+     var oc = sv.substring(origBlock, origBlock + 200);
+
+
+						
+     origin = getVal(oc, 'locationName') || '?';
     }
 
+
+						
+   if (destBlock >= 0) {
+      var dc = sv.substring(destBlock, destBlock + 200);
+      dest = getVal(dc, 'locationName') || '?';
+
+
+						
+   }
     var operMatch = sv.indexOf(':operator>');
     var operator = '?';
     if (operMatch >= 0) {
-      operator = getVal(sv.substring(operMatch - 5, operMatch + 100), 'operator') || '?';
+
+
+						
+     operator = getVal(sv.substring(operMatch - 5, operMatch + 100), 'operator') || '
     }
 
-    var direction = 'east';
+
+					
+				
+			
+			
+				
+					
+?';
+				
+			
+		
+		
+			
+				 				
+					
+						
+   var direction = 'east';
     if (type === 'arr') {
-      if (isEastOrigin(origin)) direction = 'west';
+
+
+						
+     if (isEastOrigin(origin)) direction = 'west';
     } else {
-      if (isEastOrigin(dest)) direction = 'east';
-      else direction = 'west';
+
+
+						
+     if (isEastOrigin(dest)) direction = 'east';
+
+
+						
+     else direction = 'west';
     }
 
-    var delayMins = 0;
+
+						
+   var delayMins = 0;
     if (et && et.indexOf(':') >= 0 && sch) {
-      var e2 = parseTimeStr(et);
+
+
+						
+     var e2 = parseTimeStr(et);
       var s2 = parseTimeStr(sch);
       if (e2 && s2) delayMins = Math.round((e2 - s2) / 60000);
-    }
 
+
+						
+   }
     results.push({
-      origin: origin,
-      destination: dest,
-      scheduledTime: parseTimeStr(sch),
-      bestTime: bestTime,
-      isRealtime: true,
-      isDelayed: delayMins > 0,
-      delayMins: delayMins,
-      etaText: et || 'On time',
-      direction: direction,
-      operator: operator,
-      type: type,
-      dedupKey: (sch || '') + (dest || '')
-    });
-  }
-  return results;
+
+
+						
+     origin: origin, destination: dest, scheduledTime: parseTimeStr(sch),
+      bestTime: bestTime, isRealtime: true, isDelayed: delayMins > 0,
+      delayMins: delayMins, etaText: et || 'On time', direction: direction,
+      operator: operator, type: type, dedupKey: (sch || '') + (dest || '')
+
+
+						
+}); }
+						
+ return results;
 }
 
+
+						
 async function fetchNationalRail(){
   var results=[];
   var types=['arr','dep'];
   for(var i=0;i<2;i++){
-    var type=types[i];
+
+
+						
+   var type=types[i];
     try{
-      var soapBody=buildSoap(type);
+
+
+						
+     var soapBody=buildSoap(type);
       var response;
       try{
-        response=await fetch(NR_ENDPOINT,{
-          method:"POST",
-          headers:{"Content-Type":"application/soap+xml;charset=utf-8"},
-          body:soapBody
-        });
+
+
+						
+       response=await fetch(NR_ENDPOINT,{method:"POST",headers:{"Content-Type":"appli
       }catch(e){
-        response=await fetch(CORS_PROXY+encodeURIComponent(NR_ENDPOINT),{
-          method:"POST",
-          headers:{"Content-Type":"application/soap+xml;charset=utf-8"},
-          body:soapBody
-        });
+
+
+						
+       response=await fetch(CORS_PROXY+encodeURIComponent(NR_ENDPOINT),{method:"POST"
       }
-      if(!response.ok)throw new Error("HTTP "+response.status);
+
+
+						
+     if(!response.ok)throw new Error("HTTP "+response.status);
       var xml=await response.text();
       var svcs=parseXml(xml,type);
       for(var j=0;j<svcs.length;j++) results.push(svcs[j]);
-    }catch(e){
-      console.warn("NR API ("+type+") error:",e);
-      lastError=e.message;
-    }
+
+
+						
+   }catch(e){console.warn("NR API ("+type+") error:",e);lastError=e.message;}
   }
-  return results;
+
+
+						
+ return results;
 }
 
+
+						
 function deduplicateTrains(trainList){
   var sorted=trainList.slice().sort(function(a,b){return a.bestTime-b.bestTime;});
-  var results=[];
+
+
+					
+				
+			
+			
+				
+					
+cation/
+,header
+
+				
+			
+		
+		
+			
+				 				
+					
+						
+ var results=[];
   for(var i=0;i<sorted.length;i++){
-    var t=sorted[i];
+
+
+						
+   var t=sorted[i];
     var isDupe=false;
     for(var j=0;j<results.length;j++){
-      var r=results[j];
-      if(r.destination===t.destination && Math.abs(r.bestTime.getTime()-t.bestTime.getTime())<=120000){
-        // For eastbound (towards Brighton), prefer arrival time
-        // For westbound (towards coast), prefer departure time
-        if(r.direction==='east' && t.type==='arr') results[j]=t;
+
+
+						
+     var r=results[j];
+      if(r.destination===t.destination && Math.abs(r.bestTime.getTime()-t.bestTime.get
+
+
+						
+       if(r.direction==='east' && t.type==='arr') results[j]=t;
         else if(r.direction==='west' && t.type==='dep') results[j]=t;
         isDupe=true;
         break;
-      }
-    }
-    if(!isDupe) results.push(t);
+
+
+						
+} }
+						
+   if(!isDupe) results.push(t);
   }
-  results.sort(function(a,b){return a.bestTime-b.bestTime;});
-  return results;
+
+
+						
+ results.sort(function(a,b){return a.bestTime-b.bestTime;});
+
+
+						
+ return results;
 }
 
+
+						
 function computeClosures(trainList){
   if(!trainList.length)return[];
   var sorted=trainList.slice().sort(function(a,b){return a.bestTime-b.bestTime;});
   var periods=[];
   var cs=null,ce=null;
   for(var i=0;i<sorted.length;i++){
-    var t=sorted[i];
+
+
+						
+   var t=sorted[i];
     var cl=new Date(t.bestTime.getTime()-BARRIER_CLOSE_BEFORE*60000);
     var op=new Date(t.bestTime.getTime()+OPEN_AFTER*60000);
     if(cs===null){cs=cl;ce=op}
-    else if(cl.getTime()-ce.getTime()<=CONSECUTIVE_WINDOW*60000){ce=new Date(Math.max(ce.getTime(),op.getTime()))}
+    else if(cl.getTime()-ce.getTime()<=CONSECUTIVE_WINDOW*60000){ce=new Date(Math.max(
     else{periods.push({start:cs,end:ce});cs=cl;ce=op}
-  }
+
+
+						
+ }
   if(cs)periods.push({start:cs,end:ce});
   return periods;
-}
 
+
+						
+}
+						
 async function refreshData(){
   try{
-    $("errorBox").classList.add("hidden");
+
+
+						
+   $("errorBox").classList.add("hidden");
     var liveTrains=await fetchNationalRail();
     if(liveTrains.length>0){
-      trains=deduplicateTrains(liveTrains);
+
+
+						
+     trains=deduplicateTrains(liveTrains);
       for(var th=0;th<trains.length;th++){
-        var t=trains[th];
+
+
+						
+       var t=trains[th];
         var found=false;
         for(var hi=0;hi<trainHistory.length;hi++){
-          if(trainHistory[hi].dedupKey===t.dedupKey){found=true;trainHistory[hi]=t;break;}
-        }
-        if(!found) trainHistory.push(t);
+
+
+					
+				
+				
+					
+						
+if(trainHistory[hi].dedupKey===t.dedupKey){found=true;trainHistory[hi]=t;bre
+
+
+					
+				
+			
+			
+				
+					
+Time())
+				
+			
+			
+				
+					
+ce.getT
+				
+			
+			
+				
+					
+ak;}
+				
+			
+		
+		
+			
+				 				
+					
+						
+}
+						
+       if(!found) trainHistory.push(t);
       }
-      var cutoff=new Date(new Date().getTime()-3600000);
+
+
+						
+     var cutoff=new Date(new Date().getTime()-3600000);
       trainHistory=trainHistory.filter(function(t){return t.bestTime>cutoff;});
       apiMode="live";
       $("apiStatus").className="api-status api-live";
       $("apiStatus").textContent="Live Data Connected";
       $("dataMode").textContent="LIVE";
       $("dataMode").style.color="#22D3EE";
-    } else {
+
+
+						
+   } else {
       trains=[];
       apiMode="offline";
       $("apiStatus").className="api-status api-error";
       $("apiStatus").textContent="Offline"+(lastError?" ("+lastError+")":"");
       $("dataMode").textContent="OFFLINE";
       $("dataMode").style.color="#FCA5A5";
-    }
+
+
+						
+   }
     closurePeriods=computeClosures(trains);
     $("lastRefreshTime").textContent=fmtShort(new Date());
     renderTrains();
-  }catch(e){
+
+
+						
+ }catch(e){
     console.error("Refresh error:",e);
     $("errorBox").textContent="Error: "+e.message;
     $("errorBox").classList.remove("hidden");
-  }
-}
 
+
+						
+} }
+						
 function renderTrains(){
   var now=new Date();
-  var upcoming=trains.filter(function(t){return t.bestTime>new Date(now.getTime()-60000);}).slice(0,6);
-  if(!upcoming.length){$("trainList").innerHTML='<div class="empty">No upcoming trains</div>';return}
+  var upcoming=trains.filter(function(t){return t.bestTime>new Date(now.getTime()-6000
+  if(!upcoming.length){$("trainList").innerHTML='<div class="empty">No upcoming trains
   var html="";
   for(var i=0;i<upcoming.length;i++){
-    var t=upcoming[i];
+
+
+						
+   var t=upcoming[i];
     var ms=t.bestTime.getTime()-now.getTime();
     var isPast=ms<-30000;
     var dirColor=t.direction==="east"?"#38BDF8":"#FB923C";
     var arrow=t.direction==="east"?"&rarr;":"&larr;";
-    var delayBadge=t.isDelayed&&t.delayMins>0?'<span class="delay-badge">+'+t.delayMins+'m</span>':"";
+    var delayBadge=t.isDelayed&&t.delayMins>0?'<span class="delay-badge">+'+t.delayMin
     var liveDot=t.isRealtime?'<span class="live-dot">&#9679; LIVE</span>':"";
     var etaColor=t.etaText==="On time"?"#6EE7B7":t.isDelayed?"#FCD34D":"#94A3B8";
     html+='<div class="train-row" style="opacity:'+(isPast?.35:1)+'">';
-    html+='<div class="train-dir" style="color:'+dirColor+';font-weight:700">'+arrow+'</div>';
+    html+='<div class="train-dir" style="color:'+dirColor+';font-weight:700">'+arrow+'
     html+='<div class="train-info">';
     html+='<div class="train-route">'+t.origin+' &rarr; '+t.destination+'</div>';
-    html+='<div class="train-meta">'+t.operator+liveDot+delayBadge+' &middot; <span style="color:'+etaColor+'">'+t.etaText+'</span></div>';
-    html+='</div>';
+    html+='<div class="train-meta">'+t.operator+liveDot+delayBadge+' &middot; <span st
+
+
+					
+				
+			
+			
+				
+					
+0);}).s
+</div>'
+
+					
+s+'m</s
+					
+</div>'
+				
+			
+			
+				
+					
+yle="co
+				
+			
+		
+		
+			
+				 				
+					
+						
+   html+='</div>';
     html+='<div class="train-time">';
     html+='<div class="train-time-val">'+fmtShort(t.bestTime)+'</div>';
-    html+='<div class="train-countdown" style="color:'+(ms>0?'#94A3B8':'#EF4444')+'">'+(ms>0?fmtCountdown(ms):'passed')+'</div>';
+    html+='<div class="train-countdown" style="color:'+(ms>0?'#94A3B8':'#EF4444')+'">'
     html+='</div></div>';
-  }
-  $("trainList").innerHTML=html;
+
+
+						
+}
+						
+ $("trainList").innerHTML=html;
 }
 
+
+						
 function updateStatus(){
   var now=new Date();
   $("clock").textContent=fmtTime(now);
@@ -441,65 +1184,116 @@ function updateStatus(){
   nextCloseTime=null;nextOpenTime=null;
   var currentClosure=null,upcoming=null;
   var t=now.getTime();
-
   for(var i=0;i<closurePeriods.length;i++){
-    var p=closurePeriods[i];
+
+
+						
+   var p=closurePeriods[i];
     if(t>=p.start.getTime()&&t<=p.end.getTime()){currentClosure=p;break}
     if(p.start.getTime()>t&&!upcoming){upcoming=p}
-  }
 
+
+						
+ }
   if(currentClosure){
-    status="CLOSED";
+
+
+						
+   status="CLOSED";
     nextOpenTime=currentClosure.end;
     var reopenIn=fmtCountdown(currentClosure.end.getTime()-t);
     msg="Barriers likely DOWN. Reopens in ~"+reopenIn;
     $("statusTime").textContent="Opens ~"+fmtShort(currentClosure.end);
     $("statusTime").classList.remove("hidden");
     $("statusCard").classList.add("pulse");
-  }else{
+
+
+						
+ }else{
     $("statusCard").classList.remove("pulse");
     if(upcoming){
-      var ms=upcoming.start.getTime()-t;
+
+
+						
+     var ms=upcoming.start.getTime()-t;
       nextCloseTime=upcoming.start;nextOpenTime=upcoming.end;
       if(ms<=180000){status="CLOSING_SOON";msg="Closing in ~"+fmtCountdown(ms)}
       else{status="OPEN";msg="Next closure in ~"+fmtCountdown(ms)}
-    }else{
-      msg="No more closures expected today";
-    }
-    $("statusTime").classList.add("hidden");
+
+
+						
+   }else{msg="No more closures expected today"}
+
+
+						
+   $("statusTime").classList.add("hidden");
   }
 
-  var c=getColors(status);
+
+						
+ var c=getColors(status);
   var card=$("statusCard");
   card.style.background=c.bg;card.style.color=c.text;card.style.boxShadow=c.glow;
-  $("statusTitle").textContent=status==="CLOSED"?"BARRIERS DOWN":status==="CLOSING_SOON"?"CLOSING SOON":"CROSSING CLEAR";
+  $("statusTitle").textContent=status==="CLOSED"?"BARRIERS DOWN":status==="CLOSING_SOO
   $("statusMsg").textContent=msg;
-
   var arm=$("barrierArm"),bar=$("armBar"),la=$("lightA"),lb=$("lightB");
   var stripes=document.querySelectorAll(".stripe");
   if(status==="CLOSED"){
-    arm.style.transform="rotate(0deg)";bar.setAttribute("fill","#DC2626");
+
+
+					
+				
+			
+			
+				
+					
++(ms>0?
+				
+			
+			
+				
+					
+N"?"CLO
+				
+			
+		
+		
+			
+				 				
+					
+						
+   arm.style.transform="rotate(0deg)";bar.setAttribute("fill","#DC2626");
     stripes.forEach(function(s){s.setAttribute("fill","#FFF")});
     la.setAttribute("opacity","1");la.className="blink-a";
     lb.setAttribute("opacity","1");lb.className="blink-b";
-  }else if(status==="CLOSING_SOON"){
+
+
+						
+ }else if(status==="CLOSING_SOON"){
     arm.style.transform="rotate(-30deg)";bar.setAttribute("fill","#F59E0B");
     stripes.forEach(function(s){s.setAttribute("fill","#000")});
-    la.setAttribute("opacity","0");la.className="";lb.setAttribute("opacity","0");lb.className="";
-  }else{
+    la.setAttribute("opacity","0");la.className="";lb.setAttribute("opacity","0");lb.c
+
+
+						
+ }else{
     arm.style.transform="rotate(-80deg)";bar.setAttribute("fill","#16A34A");
     stripes.forEach(function(s){s.setAttribute("fill","#15803d")});
-    la.setAttribute("opacity","0");la.className="";lb.setAttribute("opacity","0");lb.className="";
-  }
+    la.setAttribute("opacity","0");la.className="";lb.setAttribute("opacity","0");lb.c
 
-  if(nextCloseTime){$("nextCloseCountdown").textContent=fmtCountdown(Math.max(0,nextCloseTime.getTime()-t));$("nextCloseCountdown").style.color="#F59E0B";$("nextCloseTime").textContent=fmtShort(nextCloseTime)}
-  else{$("nextCloseCountdown").textContent="--";$("nextCloseCountdown").style.color="#475569";$("nextCloseTime").textContent=""}
-  if(nextOpenTime){$("nextOpenCountdown").textContent=fmtCountdown(Math.max(0,nextOpenTime.getTime()-t));$("nextOpenCountdown").style.color="#16A34A";$("nextOpenTime").textContent=fmtShort(nextOpenTime)}
-  else{$("nextOpenCountdown").textContent="--";$("nextOpenCountdown").style.color="#475569";$("nextOpenTime").textContent=""}
 
+						
+ }
+  if(nextCloseTime){$("nextCloseCountdown").textContent=fmtCountdown(Math.max(0,nextCl
+  else{$("nextCloseCountdown").textContent="--";$("nextCloseCountdown").style.color="#
+  if(nextOpenTime){$("nextOpenCountdown").textContent=fmtCountdown(Math.max(0,nextOpen
+  else{$("nextOpenCountdown").textContent="--";$("nextOpenCountdown").style.color="#47
   renderTrains();
-}
 
+
+						
+}
+						
 function sendFeedback(state){
   var now=new Date();
   var currentStatus=$("statusTitle").textContent;
@@ -507,12 +1301,21 @@ function sendFeedback(state){
   var nextTrain=null;
   var allTrains=trainHistory.length>0?trainHistory:trains;
   for(var i=0;i<allTrains.length;i++){
-    if(allTrains[i].bestTime<=now) lastTrain=allTrains[i];
-    if(allTrains[i].bestTime>now&&!nextTrain) nextTrain=allTrains[i];
+
+
+						
+   if(allTrains[i].bestTime<=now) lastTrain=allTrains[i];
+
+
+						
+   if(allTrains[i].bestTime>now&&!nextTrain) nextTrain=allTrains[i];
   }
-  var payload={
+
+
+						
+ var payload={
     timestamp:now.toISOString(),
-    reported:state,
+    event:state,
     predicted:currentStatus,
     lastTrainTime:lastTrain?fmtShort(lastTrain.bestTime):'',
     lastTrainDirection:lastTrain?lastTrain.direction:'',
@@ -522,27 +1325,85 @@ function sendFeedback(state){
     nextTrainDirection:nextTrain?nextTrain.direction:'',
     nextTrainRoute:nextTrain?(nextTrain.origin+' > '+nextTrain.destination):'',
     nextTrainSecsAway:nextTrain?Math.round((nextTrain.bestTime-now)/1000):''
-  };
+
+
+						
+ };
   $("fbMsg").textContent="Sending...";
   $("fbMsg").classList.remove("hidden");
   fetch(FEEDBACK_URL,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
+
+
+					
+				
+				
+					
+						
+method:'POST',mode:'no-cors',
+
+
+					
+				
+			
+			
+				
+					
+lassNam
+					
+lassNam
+					
+oseTime
+475569"
+Time.ge
+5569";$
+
+				
+			
+		
+		
+			
+				 				
+					
+						
+   headers:{'Content-Type':'application/json'},
+
+
+						
+   body:JSON.stringify(payload)
   }).then(function(){
-    $("fbMsg").textContent="Thanks! You reported the crossing is "+state+" at "+fmtShort(now)+".";
+
+
+						
+   var label=state==='closing'?'barriers closing':'barriers opening';
+    $("fbMsg").textContent="Thanks! Recorded "+label+" at "+fmtShort(now)+".";
     setTimeout(function(){$("fbMsg").classList.add("hidden")},5000);
-  }).catch(function(){
+
+
+						
+ }).catch(function(){
     $("fbMsg").textContent="Thanks! Feedback noted (offline).";
     setTimeout(function(){$("fbMsg").classList.add("hidden")},5000);
-  });
-}
 
+
+						
+}); }
+						
 refreshData();
 setInterval(updateStatus,1000);
 setInterval(refreshData,60000);
 </script>
+<script data-goatcounter="https://richbroad29.goatcounter.com/count"
 
+
+						
+       async src="//gc.zgo.at/count.js"></script>
 </body>
-</html>
+
+
+						
+</html> 
+					
+				
+			
+		
+
